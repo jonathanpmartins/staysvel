@@ -2,48 +2,35 @@
 
 namespace Stays\Api;
 
-use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
-use Stays\Api\Booking\Booking;
+use Stays\Api\Lib\Booking;
+use Stays\Api\Lib\Calendar;
+use Stays\Api\Lib\Content;
+use Stays\Api\Lib\Finance;
 
 class Stays
 {
+    public static function bookRequest(array $parameters = []): array
+    {
+        return (new Http())->post('/book-request', $parameters);
+    }
+
     public static function booking(): Booking
     {
         return new Booking();
     }
 
-    protected function get(string $uri): object
+    public static function finance(): Finance
     {
-        $token = base64_encode(config('stays.client_id').':'.config('stays.client_secret'));
-
-        $endpoint = config('stays.endpoint');
-
-        $response = Http::withToken($token, 'Basic')
-            ->contentType('application/json')
-            ->acceptJson()
-            ->get($endpoint.'/external/v1'.$uri);
-
-        return $this->response($response);
+        return new Finance();
     }
 
-    protected function response(Response $response): object
+    public static function calendar(): Calendar
     {
-        if ($response->successful())
-        {
-            return $response->object();
-        }
-
-        return $this->responseFailed($response);
+        return new Calendar();
     }
 
-    protected function responseFailed(Response $response): object
+    public static function content(): Content
     {
-        return (object) [
-            'failed' => $response->failed(),
-            'status' => $response->status(),
-            'body' => $response->body(),
-            'json' => $response->json(),
-        ];
+        return new Content();
     }
 }
