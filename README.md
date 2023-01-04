@@ -1,6 +1,5 @@
 # Stays API integration with Laravel
 
----
 - [Booking Checkout API](#booking-checkout-api)
   - [Initiate checkout process](#initiate-checkout-process)
 - [Promo code API](#promo-code-api)
@@ -60,11 +59,20 @@
   - [Modify group](#modify-group)
   - [Delete group](#delete-group) 
   - [Retrieve Groups](#retrieve-groups)
- 
-
----
-
-
+- [Listing Settings API](#listing-settings-api)
+  - [Listing sell price settings](#listing-sell-price-settings)
+  - [Listing booking settings](#listing-booking-settings)
+- [Translations API](#translations-api)
+  - [Multi-unit property types](#multi-unit-property-types)
+  - [Single-unit property types](#single-unit-property-types)
+  - [Listing types](#listing-types)
+  - [Room types](#room-types)
+  - [Bedroom types](#bedroom-types)
+  - [Bathroom types](#bathroom-types)
+  - [Other living room types](#other-living-room-types)
+  - [Bed types](#bed-types)
+  - [Property amenities](#property-amenities)
+  - [Listing amenities](#listing-amenities)
 
 ## Booking Checkout API
 
@@ -288,7 +296,7 @@ Stays::booking()->blocking()->create(array $parameters);
 
 ### Modify blocking
 ```php
-Stays::booking()->blocking()->update(array $parameters);
+Stays::booking()->blocking()->update(string $reservationId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -307,7 +315,7 @@ Stays::booking()->blocking()->update(array $parameters);
 
 ### Delete blocking
 ```php
-Stays::booking()->blocking()->delete(string $id);
+Stays::booking()->blocking()->delete(string $reservationId);
 ```
 
 ### Create reservation
@@ -339,12 +347,12 @@ Stays::booking()->reservations()->create(array $parameters);
 
 ### Retrieve reservation
 ```php
-Stays::booking()->reservations()->get(string $id);
+Stays::booking()->reservations()->get(string $reservationId);
 ```
 
 ### Modify reservation
 ```php
-Stays::booking()->reservations()->update(string $id, array $parameters);
+Stays::booking()->reservations()->update(string $reservationId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -370,7 +378,7 @@ Stays::booking()->reservations()->update(string $id, array $parameters);
 
 ### Cancel reservation
 ```php
-Stays::booking()->reservations()->cancel(string $id, array $parameters);
+Stays::booking()->reservations()->cancel(string $reservationId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -383,7 +391,7 @@ Stays::booking()->reservations()->cancel(string $id, array $parameters);
 
 ### Delete reservation
 ```php
-Stays::booking()->reservations()->delete(string $id);
+Stays::booking()->reservations()->delete(string $reservationId);
 ```
 
 ### Search active reservations
@@ -465,7 +473,7 @@ Stays::booking()->clients()->search(array $parameters);
 
 ### Client
 ```php
-Stays::booking()->clients()->get(string $id);
+Stays::booking()->clients()->get(string $clientId);
 ```
 
 
@@ -495,12 +503,12 @@ Stays::finance()->paymentProviders()->create(array $parameters);
 
 ### Retrieve Payment Provider
 ```php
-Stays::finance()->paymentProviders()->get(string $id);
+Stays::finance()->paymentProviders()->get(string $providerId);
 ```
 
 ### Modify Payment Provider
 ```php
-Stays::finance()->paymentProviders()->update(string $id, array $parameters);
+Stays::finance()->paymentProviders()->update(string $providerId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -528,7 +536,7 @@ Stays::finance()->paymentProviders()->search(array $parameters);
 
 ### Retrieve Listing Calendar
 ```php
-Stays::calendar()->listings()->get(string $id, array $parameters);
+Stays::calendar()->listings()->get(string $listingId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -543,7 +551,7 @@ Stays::calendar()->listings()->get(string $id, array $parameters);
 
 ### Update Listing Calendar
 ```php
-Stays::calendar()->listings()->update(string $id, array $parameters);
+Stays::calendar()->listings()->update(string $listingId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -753,26 +761,26 @@ Stays::content()->properties()->update(string $propertyId, array $parameters);
 <details>
   <summary>Parameters</summary>
 
-| Parameter            | Type    | Description                                                              |
-|:---------------------|:--------|:-------------------------------------------------------------------------|
-| internalName *       | String  | Property unique internal name                                            |
-| _idtype *            | String  | Property type identifier. List of available types is here                |
-| _mstitle             | Object  | Multilanguage commercial name                                            |
-| _msdesc              | Object  | Multilanguage commercial description                                     |
-| status               | String  | Status of property. Accepts values ['active','inactive','draft']         |
-| address              | Object  | Address of property.                                                     |
-| address.countryCode  | String  | ISO country countryCode                                                  |
-| address.state        | String  | State                                                                    |
-| address.stateCode    | String  | State code                                                               |
-| address.city         | String  | City                                                                     |
-| address.region       | String  | Region of city                                                           |
-| address.street       | String  | Street                                                                   |
-| address.streetNumber | Integer | Number of street                                                         |
-| addreess.zip         | String  | Zip code                                                                 |
-| latLng               | Object  | Geo coordinates                                                          |
-| latLng._f_lat        | Float   | Latitude                                                                 |
-| latLng._f_lng        | Float   | Longitude                                                                |
-| amenities            | Array   | Property amenities identifiers list. List of available amenities is here |
+| Parameter            | Type    | Description                                                                             |
+|:---------------------|:--------|:----------------------------------------------------------------------------------------|
+| internalName *       | String  | Property unique internal name                                                           |
+| _idtype *            | String  | Property type identifier. List of available types is [here](#multi-unit-property-types) |
+| _mstitle             | Object  | Multilanguage commercial name                                                           |
+| _msdesc              | Object  | Multilanguage commercial description                                                    |
+| status               | String  | Status of property. Accepts values ['active','inactive','draft']                        |
+| address              | Object  | Address of property.                                                                    |
+| address.countryCode  | String  | ISO country countryCode                                                                 |
+| address.state        | String  | State                                                                                   |
+| address.stateCode    | String  | State code                                                                              |
+| address.city         | String  | City                                                                                    |
+| address.region       | String  | Region of city                                                                          |
+| address.street       | String  | Street                                                                                  |
+| address.streetNumber | Integer | Number of street                                                                        |
+| addreess.zip         | String  | Zip code                                                                                |
+| latLng               | Object  | Geo coordinates                                                                         |
+| latLng._f_lat        | Float   | Latitude                                                                                |
+| latLng._f_lng        | Float   | Longitude                                                                               |
+| amenities            | Array   | Property amenities identifiers list. List of available amenities is here                |
 </details>
 
 ### Retrieve Properties
@@ -930,3 +938,70 @@ Stays::content()->groups()->search(array $parameters);
 | skip      | Integer | Number of records to skip. Used to build proper pagination. Default value is 0 |
 | limit     | Integer | Maximum number of records to return. Default and maximum value is 20           |
 </details>
+
+
+
+## Listing Settings API
+
+### Listing sell price settings
+```php
+Stays::setting()->listing()->price(string $listingId);
+```
+
+### Listing booking settings
+```php
+Stays::setting()->listing()->booking(string $listingId);
+```
+
+
+## Translations API
+
+### Multi-unit property types
+```php
+Stays::translation()->types()->multiUnitProperty();
+```
+
+### Single-unit property types
+```php
+Stays::translation()->types()->singleUnitProperty();
+```
+
+### Listing types
+```php
+Stays::translation()->types()->listing();
+```
+
+### Room types
+```php
+Stays::translation()->types()->room();
+```
+
+### Bedroom types
+```php
+Stays::translation()->types()->bedroom();
+```
+
+### Bathroom types
+```php
+Stays::translation()->types()->bathroom();
+```
+
+### Other living room types
+```php
+Stays::translation()->types()->other();
+```
+
+### Bed types
+```php
+Stays::translation()->types()->bed();
+```
+
+### Property amenities
+```php
+Stays::translation()->amenities()->property();
+```
+
+### Listing amenities
+```php
+Stays::translation()->amenities()->listing();
+```
