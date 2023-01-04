@@ -2,12 +2,14 @@
     "name": "jonathanpmartins/stays-php-api",
     "description": "Stays PHP API",
     "license": "MIT",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "Jonathan Martins",
             "email": "web@jonathanmartins.com.br"
         }
     ],
+    "keywords": ["stays", "api", "integration", "laravel"],
     "require": {
         "php": "^8.0.0",
         "ext-json": "*",
