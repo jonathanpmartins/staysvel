@@ -16,20 +16,22 @@ class StaysServiceProvider extends ServiceProvider
 
         $token = base64_encode($this->config('stays.client_id').':'.$this->config('stays.client_secret'));
 
-        Http::macro('stays', function () use ($token)
+        $endpoint = $this->config('stays.endpoint').'/external/v1';
+
+        Http::macro('stays', function () use ($token, $endpoint)
         {
             return Http::withToken($token, 'Basic')
                 ->contentType('application/json')
                 ->acceptJson()
-                ->baseUrl($this->config('stays.endpoint').'/external/v1');
+                ->baseUrl($endpoint);
         });
 
-        Http::macro('staysXlsx', function () use ($token)
+        Http::macro('staysXlsx', function () use ($token, $endpoint)
         {
             return Http::withToken($token, 'Basic')
                 ->contentType('application/vnd.openxmlformats')
                 ->accept('application/vnd.openxmlformats')
-                ->baseUrl($this->config('stays.endpoint').'/external/v1');
+                ->baseUrl($endpoint);
         });
     }
 
