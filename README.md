@@ -2,6 +2,8 @@
 
 Laravel Package for integration with [Stays](https://stays.net/) External API. Docs: https://stays.net/external-api/
 
+
+
 # How to install
 
 ```shell
@@ -21,6 +23,7 @@ STAYS_CLIENT_SECRET=
 ```
 
 
+
 # Usage
 
 Import the `Stays` class:
@@ -29,8 +32,15 @@ use Staysvel\Stays;
 ```
 
 
-# Table of Contents
 
+# Note
+
+- All responses from a request will return an `array`.
+- All parameters marked with an asterisk (*) are required.
+
+
+
+# Table of Contents
 
 <details>
   <summary>Booking Checkout API</summary>
@@ -139,7 +149,7 @@ use Staysvel\Stays;
 
 ### Initiate checkout process
 ```php 
-Stays::bookRequest(array $parameters);
+$response = Stays::bookRequest(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -162,7 +172,7 @@ Stays::bookRequest(array $parameters);
 
 ### Create promo code
 ```php
-Stays::booking()->promoCodes()->create(array $parameters);
+$response = Stays::booking()->promoCodes()->create(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -211,12 +221,12 @@ Stays::booking()->promoCodes()->create(array $parameters);
 
 ### Get promo code
 ```php
-Stays::booking()->promoCodes()->get(string $id);
+$response = Stays::booking()->promoCodes()->get(string $id);
 ```
 
 ### Modify promo code
 ```php
-Stays::booking()->promoCodes()->update(string $id, array $parameters);
+$response = Stays::booking()->promoCodes()->update(string $id, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -265,12 +275,12 @@ Stays::booking()->promoCodes()->update(string $id, array $parameters);
 
 ### Delete promo code
 ```php
-Stays::booking()->promoCodes()->delete(string $id);
+$response = Stays::booking()->promoCodes()->delete(string $id);
 ```
 
 ### Search promo codes
 ```php
-Stays::booking()->promoCodes()->search(array $parameters);
+$response = Stays::booking()->promoCodes()->search(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -290,12 +300,12 @@ Stays::booking()->promoCodes()->search(array $parameters);
 
 ### Retrieve Search filter
 ```php
-Stays::booking()->search()->filter();
+$response = Stays::booking()->search()->filter();
 ```
 
 ### Search listings
 ```php
-Stays::booking()->search()->listings(array $parameters);
+$response = Stays::booking()->search()->listings(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -321,7 +331,7 @@ Stays::booking()->search()->listings(array $parameters);
 
 ### Calculate listing price
 ```php
-Stays::booking()->listingPrice()->calculate(array $parameters);
+$response = Stays::booking()->listingPrice()->calculate(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -337,7 +347,7 @@ Stays::booking()->listingPrice()->calculate(array $parameters);
 
 ### Create blocking
 ```php
-Stays::booking()->blocking()->create(array $parameters);
+$response = Stays::booking()->blocking()->create(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -357,7 +367,7 @@ Stays::booking()->blocking()->create(array $parameters);
 
 ### Modify blocking
 ```php
-Stays::booking()->blocking()->update(string $reservationId, array $parameters);
+$response = Stays::booking()->blocking()->update(string $reservationId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -376,12 +386,12 @@ Stays::booking()->blocking()->update(string $reservationId, array $parameters);
 
 ### Delete blocking
 ```php
-Stays::booking()->blocking()->delete(string $reservationId);
+$response = Stays::booking()->blocking()->delete(string $reservationId);
 ```
 
 ### Create reservation
 ```php
-Stays::booking()->reservations()->create(array $parameters);
+$response = Stays::booking()->reservations()->create(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -408,12 +418,12 @@ Stays::booking()->reservations()->create(array $parameters);
 
 ### Retrieve reservation
 ```php
-Stays::booking()->reservations()->get(string $reservationId);
+$response = Stays::booking()->reservations()->get(string $reservationId);
 ```
 
 ### Modify reservation
 ```php
-Stays::booking()->reservations()->update(string $reservationId, array $parameters);
+$response = Stays::booking()->reservations()->update(string $reservationId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -439,7 +449,7 @@ Stays::booking()->reservations()->update(string $reservationId, array $parameter
 
 ### Cancel reservation
 ```php
-Stays::booking()->reservations()->cancel(string $reservationId, array $parameters);
+$response = Stays::booking()->reservations()->cancel(string $reservationId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -452,12 +462,12 @@ Stays::booking()->reservations()->cancel(string $reservationId, array $parameter
 
 ### Delete reservation
 ```php
-Stays::booking()->reservations()->delete(string $reservationId);
+$response = Stays::booking()->reservations()->delete(string $reservationId);
 ```
 
 ### Search active reservations
 ```php
-Stays::booking()->reservations()->search(array $parameters);
+$response = Stays::booking()->reservations()->search(array $parameters);
 ```
 
 <details>
@@ -477,7 +487,7 @@ Stays::booking()->reservations()->search(array $parameters);
 
 ### Reservations report XLSX
 ```php
-Stays::booking()->reservations()->export()->xlsx(array $parameters);
+$response = Stays::booking()->reservations()->export()->xlsx(array $parameters);
 ```
 
 <details>
@@ -495,7 +505,7 @@ Stays::booking()->reservations()->export()->xlsx(array $parameters);
 
 ### Reservations report JSON
 ```php
-Stays::booking()->reservations()->export()->json(array $parameters);
+$response = Stays::booking()->reservations()->export()->json(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -512,7 +522,7 @@ Stays::booking()->reservations()->export()->json(array $parameters);
 
 ### Clients
 ```php
-Stays::booking()->clients()->search(array $parameters);
+$response = Stays::booking()->clients()->search(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -534,7 +544,7 @@ Stays::booking()->clients()->search(array $parameters);
 
 ### Client
 ```php
-Stays::booking()->clients()->get(string $clientId);
+$response = Stays::booking()->clients()->get(string $clientId);
 ```
 
 
@@ -543,7 +553,7 @@ Stays::booking()->clients()->get(string $clientId);
 
 ### Create Payment Provider
 ```php
-Stays::finance()->paymentProviders()->create(array $parameters);
+$response = Stays::finance()->paymentProviders()->create(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -564,12 +574,12 @@ Stays::finance()->paymentProviders()->create(array $parameters);
 
 ### Retrieve Payment Provider
 ```php
-Stays::finance()->paymentProviders()->get(string $providerId);
+$response = Stays::finance()->paymentProviders()->get(string $providerId);
 ```
 
 ### Modify Payment Provider
 ```php
-Stays::finance()->paymentProviders()->update(string $providerId, array $parameters);
+$response = Stays::finance()->paymentProviders()->update(string $providerId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -581,7 +591,7 @@ Stays::finance()->paymentProviders()->update(string $providerId, array $paramete
 
 ### Retrieve Payment Providers
 ```php
-Stays::finance()->paymentProviders()->search(array $parameters);
+$response = Stays::finance()->paymentProviders()->search(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -597,7 +607,7 @@ Stays::finance()->paymentProviders()->search(array $parameters);
 
 ### Retrieve Listing Calendar
 ```php
-Stays::calendar()->listings()->get(string $listingId, array $parameters);
+$response = Stays::calendar()->listings()->get(string $listingId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -612,7 +622,7 @@ Stays::calendar()->listings()->get(string $listingId, array $parameters);
 
 ### Update Listing Calendar
 ```php
-Stays::calendar()->listings()->update(string $listingId, array $parameters);
+$response = Stays::calendar()->listings()->update(string $listingId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -634,12 +644,12 @@ Stays::calendar()->listings()->update(string $listingId, array $parameters);
 
 ### Retrieve Price Regions
 ```php
-Stays::price()->regions()->search();
+$response = Stays::price()->regions()->search();
 ```
 
 ### Create Price Region
 ```php
-Stays::price()->regions()->create(array $parameters);
+$response = Stays::price()->regions()->create(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -651,7 +661,7 @@ Stays::price()->regions()->create(array $parameters);
 
 ### Modify Price Region
 ```php
-Stays::price()->regions()->update(string $id, array $parameters);
+$response = Stays::price()->regions()->update(string $id, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -663,12 +673,12 @@ Stays::price()->regions()->update(string $id, array $parameters);
 
 ### Delete Price Region
 ```php
-Stays::price()->regions()->delete(string $id);
+$response = Stays::price()->regions()->delete(string $id);
 ```
 
 ### Retrieve Sell Price Rules
 ```php
-Stays::price()->rules()->search(array $parameters);
+$response = Stays::price()->rules()->search(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -683,7 +693,7 @@ Stays::price()->rules()->search(array $parameters);
 
 ### Create Sell Price Rule
 ```php
-Stays::price()->rules()->create(array $parameters);
+$response = Stays::price()->rules()->create(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -705,12 +715,12 @@ Stays::price()->rules()->create(array $parameters);
 
 ### Retrieve Sell Price Rule
 ```php
-Stays::price()->rules()->get(string $id);
+$response = Stays::price()->rules()->get(string $id);
 ```
 
 ### Modify Sell Price Rule
 ```php
-Stays::price()->rules()->update(string $id, array $parameters);
+$response = Stays::price()->rules()->update(string $id, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -732,12 +742,12 @@ Stays::price()->rules()->update(string $id, array $parameters);
 
 ### Delete Sell Price Rule
 ```php
-Stays::price()->rules()->delete(string $id);
+$response = Stays::price()->rules()->delete(string $id);
 ```
 
 ### Retrieve Listing Sell Prices
 ```php
-Stays::price()->sells()->search(array $parameters);
+$response = Stays::price()->sells()->search(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -751,12 +761,12 @@ Stays::price()->sells()->search(array $parameters);
 
 ### Retrieve Listing Sell Price
 ```php
-Stays::price()->sells()->get(string $listingId);
+$response = Stays::price()->sells()->get(string $listingId);
 ```
 
 ### Modify Listing Sell Price
 ```php
-Stays::price()->sells()->update(string $seasonId, array $parameters);
+$response = Stays::price()->sells()->update(string $seasonId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -783,7 +793,7 @@ Stays::price()->sells()->update(string $seasonId, array $parameters);
 
 ### Create Property
 ```php
-Stays::content()->properties()->create(array $parameters);
+$response = Stays::content()->properties()->create(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -812,12 +822,12 @@ Stays::content()->properties()->create(array $parameters);
 
 ### Retrieve Property
 ```php
-Stays::content()->properties()->get(string $propertyId);
+$response = Stays::content()->properties()->get(string $propertyId);
 ```
 
 ### Modify Property
 ```php
-Stays::content()->properties()->update(string $propertyId, array $parameters);
+$response = Stays::content()->properties()->update(string $propertyId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -846,7 +856,7 @@ Stays::content()->properties()->update(string $propertyId, array $parameters);
 
 ### Retrieve Properties
 ```php
-Stays::content()->properties()->search(array $parameters);
+$response = Stays::content()->properties()->search(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -860,7 +870,7 @@ Stays::content()->properties()->search(array $parameters);
 
 ### Create Listing
 ```php
-Stays::content()->listings()->create(array $parameters);
+$response = Stays::content()->listings()->create(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -892,12 +902,12 @@ Stays::content()->listings()->create(array $parameters);
 
 ### Retrieve Listing
 ```php
-Stays::content()->listings()->get(string $listingId);
+$response = Stays::content()->listings()->get(string $listingId);
 ```
 
 ### Modify Listing
 ```php
-Stays::content()->listings()->update(string $listingId, array $parameters);
+$response = Stays::content()->listings()->update(string $listingId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -930,7 +940,7 @@ Stays::content()->listings()->update(string $listingId, array $parameters);
 
 ### Retrieve Listings
 ```php
-Stays::content()->listings()->search(array $parameters);
+$response = Stays::content()->listings()->search(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -946,7 +956,7 @@ Stays::content()->listings()->search(array $parameters);
 
 ### Create group
 ```php
-Stays::content()->groups()->create(array $parameters);
+$response = Stays::content()->groups()->create(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -962,12 +972,12 @@ Stays::content()->groups()->create(array $parameters);
 
 ### Retrieve group
 ```php
-Stays::content()->groups()->get(string $groupId);
+$response = Stays::content()->groups()->get(string $groupId);
 ```
 
 ### Modify group
 ```php
-Stays::content()->groups()->update(string $groupId, array $parameters);
+$response = Stays::content()->groups()->update(string $groupId, array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -983,12 +993,12 @@ Stays::content()->groups()->update(string $groupId, array $parameters);
 
 ### Delete group
 ```php
-Stays::content()->groups()->delete(string $groupId);
+$response = Stays::content()->groups()->delete(string $groupId);
 ```
 
 ### Retrieve Groups
 ```php
-Stays::content()->groups()->search(array $parameters);
+$response = Stays::content()->groups()->search(array $parameters);
 ```
 <details>
   <summary>Parameters</summary>
@@ -1006,12 +1016,12 @@ Stays::content()->groups()->search(array $parameters);
 
 ### Listing sell price settings
 ```php
-Stays::setting()->listing()->price(string $listingId);
+$response = Stays::setting()->listing()->price(string $listingId);
 ```
 
 ### Listing booking settings
 ```php
-Stays::setting()->listing()->booking(string $listingId);
+$response = Stays::setting()->listing()->booking(string $listingId);
 ```
 
 
@@ -1019,50 +1029,50 @@ Stays::setting()->listing()->booking(string $listingId);
 
 ### Multi-unit property types
 ```php
-Stays::translation()->types()->multiUnitProperty();
+$response = Stays::translation()->types()->multiUnitProperty();
 ```
 
 ### Single-unit property types
 ```php
-Stays::translation()->types()->singleUnitProperty();
+$response = Stays::translation()->types()->singleUnitProperty();
 ```
 
 ### Listing types
 ```php
-Stays::translation()->types()->listing();
+$response = Stays::translation()->types()->listing();
 ```
 
 ### Room types
 ```php
-Stays::translation()->types()->room();
+$response = Stays::translation()->types()->room();
 ```
 
 ### Bedroom types
 ```php
-Stays::translation()->types()->bedroom();
+$response = Stays::translation()->types()->bedroom();
 ```
 
 ### Bathroom types
 ```php
-Stays::translation()->types()->bathroom();
+$response = Stays::translation()->types()->bathroom();
 ```
 
 ### Other living room types
 ```php
-Stays::translation()->types()->other();
+$response = Stays::translation()->types()->other();
 ```
 
 ### Bed types
 ```php
-Stays::translation()->types()->bed();
+$response = Stays::translation()->types()->bed();
 ```
 
 ### Property amenities
 ```php
-Stays::translation()->amenities()->property();
+$response = Stays::translation()->amenities()->property();
 ```
 
 ### Listing amenities
 ```php
-Stays::translation()->amenities()->listing();
+$response = Stays::translation()->amenities()->listing();
 ```
