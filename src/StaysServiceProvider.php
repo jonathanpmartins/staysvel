@@ -2,6 +2,7 @@
 
 namespace Staysvel;
 
+use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Http;
 
@@ -10,17 +11,17 @@ class StaysServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../config/stays.php' => config_path('stays.php'),
+            __DIR__ . '/../config/stays.php' => $this->config_path('stays.php'),
         ]);
 
-        $token = base64_encode(config('stays.client_id').':'.config('stays.client_secret'));
+        $token = base64_encode($this->config('stays.client_id').':'.$this->config('stays.client_secret'));
 
         Http::macro('stays', function () use ($token)
         {
             return Http::withToken($token, 'Basic')
                 ->contentType('application/json')
                 ->acceptJson()
-                ->baseUrl(config('stays.endpoint').'/external/v1');
+                ->baseUrl($this->config('stays.endpoint').'/external/v1');
         });
 
         Http::macro('staysXlsx', function () use ($token)
@@ -28,7 +29,7 @@ class StaysServiceProvider extends ServiceProvider
             return Http::withToken($token, 'Basic')
                 ->contentType('application/vnd.openxmlformats')
                 ->accept('application/vnd.openxmlformats')
-                ->baseUrl(config('stays.endpoint').'/external/v1');
+                ->baseUrl($this->config('stays.endpoint').'/external/v1');
         });
     }
 
@@ -38,5 +39,24 @@ class StaysServiceProvider extends ServiceProvider
         {
             return new Stays();
         });
+    }
+
+    private function config_path($path = '')
+    {
+        return $this->app()->configPath($path);
+    }
+
+    private function config($key = null)
+    {
+        return $this->app('config')->get($key);
+    }
+
+    private function app($abstract = null, array $parameters = [])
+    {
+        if (is_null($abstract)) {
+            return Container::getInstance();
+        }
+
+        return Container::getInstance()->make($abstract, $parameters);
     }
 }
