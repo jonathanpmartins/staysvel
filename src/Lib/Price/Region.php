@@ -6,9 +6,9 @@ use Stays\Api\Api;
 
 class Region extends Api
 {
-    public function search(array $parameters = []): array
+    public function search(): array
     {
-        return $this->http()->get('/parr/price-regions', $parameters);
+        return $this->http()->get('/parr/price-regions');
     }
 
     public function create(array $parameters = []): array

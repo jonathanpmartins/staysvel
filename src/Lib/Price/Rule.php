@@ -4,7 +4,7 @@ namespace Stays\Api\Lib\Price;
 
 use Stays\Api\Api;
 
-class Rules extends Api
+class Rule extends Api
 {
     public function search(array $parameters = []): array
     {
