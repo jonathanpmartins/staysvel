@@ -1,14 +1,14 @@
 <?php
 
-namespace Stays\Api;
+namespace Stays;
 
-use Stays\Api\Lib\Booking;
-use Stays\Api\Lib\Calendar;
-use Stays\Api\Lib\Content;
-use Stays\Api\Lib\Finance;
-use Stays\Api\Lib\Price;
-use Stays\Api\Lib\Setting;
-use Stays\Api\Lib\Translation;
+use Stays\Lib\Booking;
+use Stays\Lib\Calendar;
+use Stays\Lib\Content;
+use Stays\Lib\Finance;
+use Stays\Lib\Price;
+use Stays\Lib\Setting;
+use Stays\Lib\Translation;
 
 class Stays
 {

@@ -1,78 +1,116 @@
-# Stays API integration with Laravel
+# Staysvel
 
-- [Booking Checkout API](#booking-checkout-api)
-  - [Initiate checkout process](#initiate-checkout-process)
-- [Promo code API](#promo-code-api)
-  - [Create promo code](#create-promo-code)
-  - [Get promo code](#get-promo-code)
-  - [Modify promo code](#modify-promo-code)
-  - [Delete promo code](#delete-promo-code)
-  - [Search promo codes](#search-promo-codes)
-- [Booking API](#booking-api)
-  - [Retrieve Search filter](#retrieve-search-filter)
-  - [Search listings](#search-listings)
-  - [Calculate listing price](#calculate-listing-price)
-  - [Create blocking](#create-blocking)
-  - [Modify blocking](#modify-blocking)
-  - [Delete blocking](#delete-blocking)
-  - [Create reservation](#create-reservation)
-  - [Retrieve reservation](#retrieve-reservation)
-  - [Modify reservation](#modify-reservation)
-  - [Cancel reservation](#cancel-reservation)
-  - [Delete reservation](#delete-reservation)
-  - [Search active reservations](#search-active-reservations)
-  - [Reservations report XLSX](#reservations-report-xlsx)
-  - [Reservations report JSON](#reservations-report-json)
-  - [Clients](#clients)
-- [Finance API](#finance-api)
-  - [Create Payment Provider](#create-payment-provider)
-  - [Retrieve Payment Provider](#retrieve-payment-provider)
-  - [Modify Payment Provider](#modify-payment-provider)
-  - [Retrieve Payment Providers](#retrieve-payment-providers)
-- [Listing Calendar API](#listing-calendar-api)
-  - [Retrieve Listing Calendar](#retrieve-listing-calendar)
-  - [Update Listing Calendar](#update-listing-calendar)
-- [Prices API](#prices-api)
-  - [Retrieve Price Regions](#retrieve-price-regions)
-  - [Create Price Region](#create-price-region)
-  - [Modify Price Region](#modify-price-region)
-  - [Delete Price Region](#delete-price-region)
-  - [Retrieve Sell Price Rules](#retrieve-sell-price-rules)
-  - [Create Sell Price Rule](#create-sell-price-rule)
-  - [Retrieve Sell Price Rule](#retrieve-sell-price-rule)
-  - [Modify Sell Price Rule](#modify-sell-price-rule)
-  - [Delete Sell Price Rule](#delete-sell-price-rule)
-  - [Retrieve Listing Sell Prices](#retrieve-listing-sell-prices)
-  - [Retrieve Listing Sell Price](#retrieve-listing-sell-price)
-  - [Modify Listing Sell Price](#modify-listing-sell-price)
-- [Content API](#content-api)
-  - [Create Property](#create-property)
-  - [Retrieve Property](#retrieve-property)
-  - [Modify Property](#modify-property)
-  - [Retrieve Properties](#retrieve-properties)
-  - [Create Listing](#create-listing)
-  - [Retrieve Listing](#retrieve-listing)
-  - [Modify Listing](#modify-listing)
-  - [Retrieve Listings](#retrieve-listings)
-  - [Create group](#create-group)
-  - [Retrieve group](#retrieve-group)
-  - [Modify group](#modify-group)
-  - [Delete group](#delete-group) 
-  - [Retrieve Groups](#retrieve-groups)
-- [Listing Settings API](#listing-settings-api)
-  - [Listing sell price settings](#listing-sell-price-settings)
-  - [Listing booking settings](#listing-booking-settings)
-- [Translations API](#translations-api)
-  - [Multi-unit property types](#multi-unit-property-types)
-  - [Single-unit property types](#single-unit-property-types)
-  - [Listing types](#listing-types)
-  - [Room types](#room-types)
-  - [Bedroom types](#bedroom-types)
-  - [Bathroom types](#bathroom-types)
-  - [Other living room types](#other-living-room-types)
-  - [Bed types](#bed-types)
-  - [Property amenities](#property-amenities)
-  - [Listing amenities](#listing-amenities)
+Laravel Package for integration with [Stays](https://stays.net/) External API. Docs: https://stays.net/external-api/
+
+# How to install
+
+
+
+# Usage
+
+
+<details>
+  <summary>Booking Checkout API</summary>
+
+- [Initiate checkout process](#initiate-checkout-process)
+</details>
+<details>
+  <summary>Promo code API</summary>
+
+- [Create promo code](#create-promo-code)
+- [Get promo code](#get-promo-code)
+- [Modify promo code](#modify-promo-code)
+- [Delete promo code](#delete-promo-code)
+- [Search promo codes](#search-promo-codes)
+</details>
+<details>
+  <summary>Booking API</summary>
+
+- [Retrieve Search filter](#retrieve-search-filter)
+- [Search listings](#search-listings)
+- [Calculate listing price](#calculate-listing-price)
+- [Create blocking](#create-blocking)
+- [Modify blocking](#modify-blocking)
+- [Delete blocking](#delete-blocking)
+- [Create reservation](#create-reservation)
+- [Retrieve reservation](#retrieve-reservation)
+- [Modify reservation](#modify-reservation)
+- [Cancel reservation](#cancel-reservation)
+- [Delete reservation](#delete-reservation)
+- [Search active reservations](#search-active-reservations)
+- [Reservations report XLSX](#reservations-report-xlsx)
+- [Reservations report JSON](#reservations-report-json)
+- [Clients](#clients)
+</details>
+<details>
+  <summary>Finance API</summary>
+
+- [Create Payment Provider](#create-payment-provider)
+- [Retrieve Payment Provider](#retrieve-payment-provider)
+- [Modify Payment Provider](#modify-payment-provider)
+- [Retrieve Payment Providers](#retrieve-payment-providers)
+</details>
+<details>
+  <summary>Listing Calendar API</summary>
+
+- [Retrieve Listing Calendar](#retrieve-listing-calendar)
+- [Update Listing Calendar](#update-listing-calendar)
+</details>
+<details>
+  <summary>Prices API</summary>
+
+- [Retrieve Price Regions](#retrieve-price-regions)
+- [Create Price Region](#create-price-region)
+- [Modify Price Region](#modify-price-region)
+- [Delete Price Region](#delete-price-region)
+- [Retrieve Sell Price Rules](#retrieve-sell-price-rules)
+- [Create Sell Price Rule](#create-sell-price-rule)
+- [Retrieve Sell Price Rule](#retrieve-sell-price-rule)
+- [Modify Sell Price Rule](#modify-sell-price-rule)
+- [Delete Sell Price Rule](#delete-sell-price-rule)
+- [Retrieve Listing Sell Prices](#retrieve-listing-sell-prices)
+- [Retrieve Listing Sell Price](#retrieve-listing-sell-price)
+- [Modify Listing Sell Price](#modify-listing-sell-price)
+</details>
+<details>
+  <summary>Content API</summary>
+
+- [Create Property](#create-property)
+- [Retrieve Property](#retrieve-property)
+- [Modify Property](#modify-property)
+- [Retrieve Properties](#retrieve-properties)
+- [Create Listing](#create-listing)
+- [Retrieve Listing](#retrieve-listing)
+- [Modify Listing](#modify-listing)
+- [Retrieve Listings](#retrieve-listings)
+- [Create group](#create-group)
+- [Retrieve group](#retrieve-group)
+- [Modify group](#modify-group)
+- [Delete group](#delete-group)
+- [Retrieve Groups](#retrieve-groups)
+</details>
+<details>
+  <summary>Listing Settings API</summary>
+
+- [Listing sell price settings](#listing-sell-price-settings)
+- [Listing booking settings](#listing-booking-settings)
+</details>
+<details>
+  <summary>Translations API</summary>
+
+- [Multi-unit property types](#multi-unit-property-types)
+- [Single-unit property types](#single-unit-property-types)
+- [Listing types](#listing-types)
+- [Room types](#room-types)
+- [Bedroom types](#bedroom-types)
+- [Bathroom types](#bathroom-types)
+- [Other living room types](#other-living-room-types)
+- [Bed types](#bed-types)
+- [Property amenities](#property-amenities)
+- [Listing amenities](#listing-amenities)
+</details>
+
+
 
 ## Booking Checkout API
 

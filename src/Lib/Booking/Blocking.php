@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Api\Lib\Booking;
+namespace Stays\Lib\Booking;
 
-use Stays\Api\Api;
+use Stays\Api;
 
 class Blocking extends Api
 {

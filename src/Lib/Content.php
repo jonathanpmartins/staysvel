@@ -1,10 +1,10 @@
 <?php
 
-namespace Stays\Api\Lib;
+namespace Stays\Lib;
 
-use Stays\Api\Lib\Content\Group;
-use Stays\Api\Lib\Content\Listing;
-use Stays\Api\Lib\Content\Property;
+use Stays\Lib\Content\Group;
+use Stays\Lib\Content\Listing;
+use Stays\Lib\Content\Property;
 
 class Content
 {

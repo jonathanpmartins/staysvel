@@ -1,9 +1,9 @@
 <?php
 
-namespace Stays\Api\Lib;
+namespace Stays\Lib;
 
-use Stays\Api\Lib\Translation\Amenity;
-use Stays\Api\Lib\Translation\Type;
+use Stays\Lib\Translation\Amenity;
+use Stays\Lib\Translation\Type;
 
 class Translation
 {

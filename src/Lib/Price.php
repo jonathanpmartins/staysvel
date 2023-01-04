@@ -1,10 +1,10 @@
 <?php
 
-namespace Stays\Api\Lib;
+namespace Stays\Lib;
 
-use Stays\Api\Lib\Price\Region;
-use Stays\Api\Lib\Price\Rule;
-use Stays\Api\Lib\Price\Sell;
+use Stays\Lib\Price\Region;
+use Stays\Lib\Price\Rule;
+use Stays\Lib\Price\Sell;
 
 class Price
 {

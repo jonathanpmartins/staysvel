@@ -1,6 +1,6 @@
 <?php
 
-namespace Stays\Api;
+namespace Stays;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Http;

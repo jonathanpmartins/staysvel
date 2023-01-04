@@ -1,6 +1,6 @@
 {
-    "name": "jonathanpmartins/stays-php-api",
-    "description": "Stays PHP API",
+    "name": "jonathanpmartins/staysvel",
+    "description": "Laravel Package for integration with Stays External API.",
     "license": "MIT",
     "version": "1.0.0",
     "authors": [
@@ -9,25 +9,25 @@
             "email": "web@jonathanmartins.com.br"
         }
     ],
-    "keywords": ["stays", "api", "integration", "laravel"],
+    "keywords": ["stays", "api", "integration", "laravel", "php", "pms"],
     "require": {
         "php": "^8.0.0",
         "ext-json": "*",
         "ext-curl": "*",
-        "illuminate/support": "^9.45",
+        "illuminate/support": "^9.46",
         "guzzlehttp/guzzle": "^7.5",
-        "illuminate/http": "^9.45"
+        "illuminate/http": "^9.46"
 
     },
     "autoload": {
         "psr-4": {
-            "Stays\\Api\\": "src/"
+            "Stays\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Stays\\Api\\StaysServiceProvider"
+                "Stays\\StaysServiceProvider"
             ]
         }
     }

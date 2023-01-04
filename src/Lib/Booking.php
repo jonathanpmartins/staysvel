@@ -1,13 +1,13 @@
 <?php
 
-namespace Stays\Api\Lib;
+namespace Stays\Lib;
 
-use Stays\Api\Lib\Booking\Blocking;
-use Stays\Api\Lib\Booking\Client;
-use Stays\Api\Lib\Booking\ListingPrice;
-use Stays\Api\Lib\Booking\PromoCode;
-use Stays\Api\Lib\Booking\Reservation;
-use Stays\Api\Lib\Booking\Search;
+use Stays\Lib\Booking\Blocking;
+use Stays\Lib\Booking\Client;
+use Stays\Lib\Booking\ListingPrice;
+use Stays\Lib\Booking\PromoCode;
+use Stays\Lib\Booking\Reservation;
+use Stays\Lib\Booking\Search;
 
 class Booking
 {

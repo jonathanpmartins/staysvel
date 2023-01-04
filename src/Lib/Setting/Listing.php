@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Api\Lib\Setting;
+namespace Stays\Lib\Setting;
 
-use Stays\Api\Api;
+use Stays\Api;
 
 class Listing extends Api
 {

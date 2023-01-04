@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Api\Lib\Translation;
+namespace Stays\Lib\Translation;
 
-use Stays\Api\Api;
+use Stays\Api;
 
 class Type extends Api
 {

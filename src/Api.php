@@ -1,6 +1,6 @@
 <?php
 
-namespace Stays\Api;
+namespace Stays;
 
 class Api
 {

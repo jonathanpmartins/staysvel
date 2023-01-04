@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Api\Lib\Content;
+namespace Stays\Lib\Content;
 
-use Stays\Api\Api;
+use Stays\Api;
 
 class Property extends Api
 {
