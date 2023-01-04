@@ -33,7 +33,7 @@ use Staysvel\Stays;
 
 
 
-# Note
+# Notes
 
 - All responses from a request will return an `array`.
 - All parameters marked with an asterisk (*) are required.
