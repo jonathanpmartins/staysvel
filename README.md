@@ -8,7 +8,7 @@ Laravel Package for integration with [Stays](https://stays.net/) External API. D
 composer require jonathanpmartins/staysvel;
 ```
 
-Publish the config file called `stays.php`.
+Search for the `Staysvel\StaysServiceProvider` provider to publish the config file called `stays.php`.
 ```shell
 php artisan vendor:publish;
 ```
@@ -25,7 +25,7 @@ STAYS_CLIENT_SECRET=
 
 Import the `Stays` class:
 ```php
-
+use Staysvel\Stays;
 ```
 
 
