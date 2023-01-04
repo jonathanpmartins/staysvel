@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Lib\Content;
+namespace Staysvel\Lib\Content;
 
-use Stays\Api;
+use Staysvel\Api;
 
 class Group extends Api
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Lib;
+namespace Staysvel\Lib;
 
-use Stays\Lib\Finance\PaymentProvider;
+use Staysvel\Lib\Finance\PaymentProvider;
 
 class Finance
 {

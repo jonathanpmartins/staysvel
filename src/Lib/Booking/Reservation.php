@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Lib\Booking;
+namespace Staysvel\Lib\Booking;
 
-use Stays\Api;
+use Staysvel\Api;
 
 class Reservation extends Api
 {

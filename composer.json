@@ -21,13 +21,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Stays\\": "src/"
+            "Staysvel\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Stays\\StaysServiceProvider"
+                "Staysvel\\StaysServiceProvider"
             ]
         }
     }

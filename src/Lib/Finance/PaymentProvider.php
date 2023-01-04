@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Lib\Finance;
+namespace Staysvel\Lib\Finance;
 
-use Stays\Api;
+use Staysvel\Api;
 
 class PaymentProvider extends Api
 {

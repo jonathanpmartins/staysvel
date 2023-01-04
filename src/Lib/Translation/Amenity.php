@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Lib\Translation;
+namespace Staysvel\Lib\Translation;
 
-use Stays\Api;
+use Staysvel\Api;
 
 class Amenity extends Api
 {

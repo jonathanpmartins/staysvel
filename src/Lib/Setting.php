@@ -1,9 +1,9 @@
 <?php
 
-namespace Stays\Lib;
+namespace Staysvel\Lib;
 
-use Stays\Lib\Booking\PromoCode;
-use Stays\Lib\Setting\Listing;
+use Staysvel\Lib\Booking\PromoCode;
+use Staysvel\Lib\Setting\Listing;
 
 class Setting
 {

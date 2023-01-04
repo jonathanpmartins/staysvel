@@ -1,10 +1,10 @@
 <?php
 
-namespace Stays\Lib;
+namespace Staysvel\Lib;
 
-use Stays\Lib\Price\Region;
-use Stays\Lib\Price\Rule;
-use Stays\Lib\Price\Sell;
+use Staysvel\Lib\Price\Region;
+use Staysvel\Lib\Price\Rule;
+use Staysvel\Lib\Price\Sell;
 
 class Price
 {

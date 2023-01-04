@@ -1,6 +1,6 @@
 <?php
 
-namespace Stays;
+namespace Staysvel;
 
 class Api
 {

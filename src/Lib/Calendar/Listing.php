@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Lib\Calendar;
+namespace Staysvel\Lib\Calendar;
 
-use Stays\Api;
+use Staysvel\Api;
 
 class Listing extends Api
 {

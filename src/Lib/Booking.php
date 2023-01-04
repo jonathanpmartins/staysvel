@@ -1,13 +1,13 @@
 <?php
 
-namespace Stays\Lib;
+namespace Staysvel\Lib;
 
-use Stays\Lib\Booking\Blocking;
-use Stays\Lib\Booking\Client;
-use Stays\Lib\Booking\ListingPrice;
-use Stays\Lib\Booking\PromoCode;
-use Stays\Lib\Booking\Reservation;
-use Stays\Lib\Booking\Search;
+use Staysvel\Lib\Booking\Blocking;
+use Staysvel\Lib\Booking\Client;
+use Staysvel\Lib\Booking\ListingPrice;
+use Staysvel\Lib\Booking\PromoCode;
+use Staysvel\Lib\Booking\Reservation;
+use Staysvel\Lib\Booking\Search;
 
 class Booking
 {

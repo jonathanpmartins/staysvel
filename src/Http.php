@@ -1,6 +1,6 @@
 <?php
 
-namespace Stays;
+namespace Staysvel;
 
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http AS HttpClient;

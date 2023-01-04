@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Lib\Price;
+namespace Staysvel\Lib\Price;
 
-use Stays\Api;
+use Staysvel\Api;
 
 class Sell extends Api
 {

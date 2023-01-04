@@ -1,8 +1,8 @@
 <?php
 
-namespace Stays\Lib;
+namespace Staysvel\Lib;
 
-use Stays\Lib\Calendar\Listing;
+use Staysvel\Lib\Calendar\Listing;
 
 class Calendar
 {

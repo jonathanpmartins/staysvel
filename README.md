@@ -4,9 +4,32 @@ Laravel Package for integration with [Stays](https://stays.net/) External API. D
 
 # How to install
 
+```shell
+composer require jonathanpmartins/staysvel;
+```
+
+Publish the config file called `stays.php`.
+```shell
+php artisan vendor:publish;
+```
+
+Add the following keys to you `.env` file and fill them up with your credentials.
+```
+STAYS_ENDPOINT=
+STAYS_CLIENT_ID=
+STAYS_CLIENT_SECRET=
+```
 
 
 # Usage
+
+Import the `Stays` class:
+```php
+
+```
+
+
+# Table of Contents
 
 
 <details>
