@@ -2,12 +2,12 @@
 
 namespace Stays\Api\Lib;
 
-use Stays\Api\Lib\Booking\PromoCode;
+use Stays\Api\Lib\Translation\Type;
 
 class Translation
 {
-    public function types(): PromoCode
+    public function types(): Type
     {
-        return new PromoCode();
+        return new Type();
     }
 }

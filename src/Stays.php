@@ -6,6 +6,9 @@ use Stays\Api\Lib\Booking;
 use Stays\Api\Lib\Calendar;
 use Stays\Api\Lib\Content;
 use Stays\Api\Lib\Finance;
+use Stays\Api\Lib\Price;
+use Stays\Api\Lib\Setting;
+use Stays\Api\Lib\Translation;
 
 class Stays
 {
@@ -29,8 +32,23 @@ class Stays
         return new Calendar();
     }
 
+    public static function price(): Price
+    {
+        return new Price();
+    }
+
     public static function content(): Content
     {
         return new Content();
+    }
+
+    public static function setting(): Setting
+    {
+        return new Setting();
+    }
+
+    public static function translation(): Translation
+    {
+        return new Translation();
     }
 }
