@@ -10,13 +10,9 @@ class StaysServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../config/stays.php' => $this->config_path('stays.php'),
-        ]);
+        $token = base64_encode($this->config('services.stays.client_id').':'.$this->config('services.stays.client_secret'));
 
-        $token = base64_encode($this->config('stays.client_id').':'.$this->config('stays.client_secret'));
-
-        $endpoint = $this->config('stays.endpoint').'/external/v1';
+        $endpoint = $this->config('services.stays.endpoint').'/external/v1';
 
         Http::macro('stays', function () use ($token, $endpoint)
         {
@@ -41,11 +37,6 @@ class StaysServiceProvider extends ServiceProvider
         {
             return new Stays();
         });
-    }
-
-    private function config_path($path = '')
-    {
-        return $this->app()->configPath($path);
     }
 
     private function config($key = null)

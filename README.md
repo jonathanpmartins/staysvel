@@ -10,9 +10,13 @@ Laravel Package for integration with [Stays](https://stays.net/) External API. D
 composer require jonathanpmartins/staysvel;
 ```
 
-Search for the `Staysvel\StaysServiceProvider` provider to publish the config file called `stays.php`.
-```shell
-php artisan vendor:publish;
+Add the following code to your `config\services.php` configuration file:
+```php
+'stays' => [
+    'endpoint' => env('STAYS_ENDPOINT'),
+    'client_id' => env('STAYS_CLIENT_ID'),
+    'client_secret' => env('STAYS_CLIENT_SECRET'),
+],
 ```
 
 Add the following keys to you `.env` file and fill them up with your credentials.
