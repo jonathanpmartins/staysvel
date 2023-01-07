@@ -9,10 +9,11 @@ use Staysvel\Lib\Finance;
 use Staysvel\Lib\Price;
 use Staysvel\Lib\Setting;
 use Staysvel\Lib\Translation;
+use Illuminate\Http\Client\Response;
 
 class Stays
 {
-    public static function bookRequest(array $parameters = []): array
+    public static function bookRequest(array $parameters = []): Response
     {
         return (new Http())->post('/book-request', $parameters);
     }

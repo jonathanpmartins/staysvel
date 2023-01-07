@@ -37,10 +37,56 @@ use Staysvel\Stays;
 
 
 
-# Notes
+# Request and Response
 
-- All responses from a request will return an `array`.
+- All input parameters are of type `array` or `string.
 - All parameters marked with an asterisk (*) are required.
+- The `$response` object is an instance of `Illuminate\Http\Client\Response`. It basically returns what the laravel http-client returns.
+
+
+
+# How deal with it
+From Laravel 9 [docs](https://laravel.com/docs/9.x/http-client):
+```php
+$response->body() : string;
+$response->json($key = null) : array|mixed;
+$response->object() : object;
+$response->collect($key = null) : Illuminate\Support\Collection;
+$response->status() : int;
+$response->ok() : bool;
+$response->successful() : bool;
+$response->redirect(): bool;
+$response->failed() : bool;
+$response->serverError() : bool;
+$response->clientError() : bool;
+$response->header($header) : string;
+$response->headers() : array;
+```
+
+
+
+# Example
+
+```php
+$response = Stays::content()->properties()->create(array $parameters);
+if ($response->successful())
+{
+   $data = $response->json(); // return data from stays
+}
+if ($response->failed())
+{
+    $status = $response->status();
+    $json = $response->json();
+    if (isset($json['message']))
+    {
+        throw new \Exception($json['message'], $status);    
+    }
+    else
+    {
+        throw new \Exception($response->body(), $status);    
+    }
+}
+```
 
 
 
@@ -78,6 +124,7 @@ use Staysvel\Stays;
 - [Reservations report XLSX](#reservations-report-xlsx)
 - [Reservations report JSON](#reservations-report-json)
 - [Clients](#clients)
+- [Client](#client)
 </details>
 <details>
   <summary>Finance API</summary>
@@ -492,6 +539,7 @@ $response = Stays::booking()->reservations()->search(array $parameters);
 ### Reservations report XLSX
 ```php
 $response = Stays::booking()->reservations()->export()->xlsx(array $parameters);
+$raw = $response->body();
 ```
 
 <details>

@@ -14,46 +14,25 @@ class Http
         $this->isXlsx = $isXlsx;
     }
 
-    public function get(string $uri, array $parameters = []): array|string
+    public function get(string $uri, array $parameters = []): Response
     {
-        $response = ($this->isXlsx ? HttpClient::staysXlsx() : HttpClient::stays())->get($uri, $parameters);
+        $client = $this->isXlsx ? HttpClient::staysXlsx() : HttpClient::stays();
 
-        return $this->response($response);
+        return $client->get($uri, $parameters);
     }
 
-    public function post(string $uri, array $parameters = []): array
+    public function post(string $uri, array $parameters = []): Response
     {
-        $response = HttpClient::stays()->post($uri, $parameters);
-
-        return $this->response($response);
+        return HttpClient::stays()->post($uri, $parameters);
     }
 
-    public function patch(string $uri, array $parameters = []): array
+    public function patch(string $uri, array $parameters = []): Response
     {
-        $response = HttpClient::stays()->patch($uri, $parameters);
-
-        return $this->response($response);
+        return HttpClient::stays()->patch($uri, $parameters);
     }
 
-    public function delete(string $uri): array
+    public function delete(string $uri): Response
     {
-        $response = HttpClient::stays()->delete($uri);
-
-        return $this->response($response);
-    }
-
-    private function response(Response $response): array|string
-    {
-        if ($response->failed())
-        {
-            return [
-                'failed' => $response->failed(),
-                'status' => $response->status(),
-                'body' => $response->body(),
-                'json' => $response->json(),
-            ];
-        }
-
-        return $this->isXlsx ? $response->body() : $response->json();
+        return HttpClient::stays()->delete($uri);
     }
 }
