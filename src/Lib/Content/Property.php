@@ -16,13 +16,13 @@ class Property extends Api
         return $this->http()->post('/content/properties', $parameters);
     }
 
-    public function get(string $id): array
+    public function get(string $propertyId): array
     {
-        return $this->http()->get('/content/properties/'.$id);
+        return $this->http()->get('/content/properties/'.$propertyId);
     }
 
-    public function update(string $id, array $parameters = []): array
+    public function update(string $propertyId, array $parameters = []): array
     {
-        return $this->http()->patch('/content/properties/'.$id, $parameters);
+        return $this->http()->patch('/content/properties/'.$propertyId, $parameters);
     }
 }
