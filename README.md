@@ -39,7 +39,7 @@ use Staysvel\Stays;
 
 # Request and Response
 
-- All input parameters are of type `array` or `string.
+- All input parameters are of type `array` or `string`.
 - All parameters marked with an asterisk (*) are required.
 - The `$response` object is an instance of `Illuminate\Http\Client\Response`. It basically returns what the laravel http-client returns.
 
