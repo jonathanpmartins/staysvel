@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http AS HttpClient;
 
 class Http
 {
-    private bool $isXlsx;
+    private bool $isXlsx = false;
     private int $timeout = 60;
 
     public function timeout(int $timeout): static
