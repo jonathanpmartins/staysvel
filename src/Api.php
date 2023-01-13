@@ -4,8 +4,17 @@ namespace Staysvel;
 
 class Api
 {
-    protected function http(bool $isXlsx = false): Http
+    protected int $timeout = 60;
+
+    public function timeout(int $timeoutInSeconds = 60): static
     {
-        return new Http($isXlsx);
+        $this->timeout = $timeoutInSeconds;
+
+        return $this;
+    }
+
+    protected function http(): Http
+    {
+        return (new Http())->timeout($this->timeout);
     }
 }

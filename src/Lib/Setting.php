@@ -2,13 +2,13 @@
 
 namespace Staysvel\Lib;
 
-use Staysvel\Lib\Booking\PromoCode;
+use Staysvel\Api;
 use Staysvel\Lib\Setting\Listing;
 
-class Setting
+class Setting extends Api
 {
     public function listing(): Listing
     {
-        return new Listing();
+        return (new Listing())->timeout($this->timeout);
     }
 }

@@ -14,6 +14,6 @@ class ReservationExport extends Api
 
     public function xlsx(array $parameters = []): Response
     {
-        return $this->http($isXlsx = true)->get('/booking/reservations-export', $parameters);
+        return $this->http()->isXlsx()->get('/booking/reservations-export', $parameters);
     }
 }

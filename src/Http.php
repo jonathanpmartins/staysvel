@@ -8,31 +8,48 @@ use Illuminate\Support\Facades\Http AS HttpClient;
 class Http
 {
     private bool $isXlsx;
+    private int $timeout = 60;
 
-    public function __construct(bool $isXlsx = false)
+    public function timeout(int $timeout): static
     {
-        $this->isXlsx = $isXlsx;
+        $this->timeout = $timeout;
+
+        return $this;
+    }
+
+    public function isXlsx(): static
+    {
+        $this->isXlsx = true;
+
+        return $this;
     }
 
     public function get(string $uri, array $parameters = []): Response
     {
-        $client = $this->isXlsx ? HttpClient::staysXlsx() : HttpClient::stays();
+        if ($this->isXlsx)
+        {
+            $client = HttpClient::timeout($this->timeout)->staysXlsx();
+        }
+        else
+        {
+            $client = HttpClient::timeout($this->timeout)->stays();
+        }
 
         return $client->get($uri, $parameters);
     }
 
     public function post(string $uri, array $parameters = []): Response
     {
-        return HttpClient::stays()->post($uri, $parameters);
+        return HttpClient::timeout($this->timeout)->stays()->post($uri, $parameters);
     }
 
     public function patch(string $uri, array $parameters = []): Response
     {
-        return HttpClient::stays()->patch($uri, $parameters);
+        return HttpClient::timeout($this->timeout)->stays()->patch($uri, $parameters);
     }
 
     public function delete(string $uri): Response
     {
-        return HttpClient::stays()->delete($uri);
+        return HttpClient::timeout($this->timeout)->stays()->delete($uri);
     }
 }

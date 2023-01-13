@@ -39,6 +39,6 @@ class Reservation extends Api
 
     public function export(): ReservationExport
     {
-        return new ReservationExport();
+        return (new ReservationExport())->timeout($this->timeout);
     }
 }

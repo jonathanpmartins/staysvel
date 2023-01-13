@@ -88,6 +88,14 @@ if ($response->failed())
 }
 ```
 
+# Timeout
+
+The default timeout is `60` seconds. To change it, use the `timeout(int $timeoutInSeconds)` function before the last function of the chain. Examples:
+```php
+$response = Stays::timeout(30)->content()->properties()->create(array $parameters);
+$response = Stays::content()->timeout(30)->properties()->create(array $parameters);
+$response = Stays::content()->properties()->timeout(30)->create(array $parameters);
+```
 
 
 # Table of Contents
