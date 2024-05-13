@@ -1,6 +1,6 @@
 <?php
 
-namespace Staysvel\Lib\Booking;
+namespace Staysvel\Lib\Booking\Reservation;
 
 use Illuminate\Http\Client\Response;
 use Staysvel\Api;

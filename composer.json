@@ -9,14 +9,30 @@
             "email": "web@jonathanmartins.com.br"
         }
     ],
-    "keywords": ["stays", "api", "integration", "laravel", "php", "pms"],
+    "keywords": [
+        "stays",
+        "api",
+        "integration",
+        "laravel",
+        "php",
+        "pms"
+    ],
     "require": {
         "php": "^8.0.0",
         "ext-json": "*",
         "ext-curl": "*",
-        "guzzlehttp/guzzle": "^7.5",
-        "illuminate/http": "^9.0|^10"
-
+        "guzzlehttp/guzzle": "^7.0",
+        "illuminate/http": "^9.0|^10.0|^11",
+        "illuminate/validation": "^9.0|^10.0|^11"
+    },
+    "require-dev": {
+        "pestphp/pest": "^2.34",
+        "orchestra/testbench": "~9.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "autoload": {
         "psr-4": {
@@ -29,5 +45,30 @@
                 "Staysvel\\StaysServiceProvider"
             ]
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve"
+        ],
+        "lint": [
+            "@php vendor/bin/phpstan analyse"
+        ],
+        "test": [
+            "@php vendor/bin/pest"
+        ]
     }
 }

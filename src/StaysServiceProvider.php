@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Http;
 
 class StaysServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public static string $prefix = '/external/v1';
+
+    public function boot(): void
     {
         Http::macro('stays', function ()
         {
             $token = base64_encode(config('services.stays.client_id').':'.config('services.stays.client_secret'));
-            $endpoint = config('services.stays.endpoint').'/external/v1';
+            $endpoint = config('services.stays.endpoint').StaysServiceProvider::$prefix;
 
             return Http::withToken($token, 'Basic')
                 ->contentType('application/json')
@@ -23,7 +25,7 @@ class StaysServiceProvider extends ServiceProvider
         Http::macro('staysXlsx', function ()
         {
             $token = base64_encode(config('services.stays.client_id').':'.config('services.stays.client_secret'));
-            $endpoint = config('services.stays.endpoint').'/external/v1';
+            $endpoint = config('services.stays.endpoint').StaysServiceProvider::$prefix;
 
             return Http::withToken($token, 'Basic')
                 ->contentType('application/vnd.openxmlformats')
@@ -32,7 +34,7 @@ class StaysServiceProvider extends ServiceProvider
         });
     }
 
-    public function register()
+    public function register(): void
     {
         $this->app->singleton(Stays::class, function()
         {

@@ -2,14 +2,15 @@
 
 namespace Staysvel;
 
+use Illuminate\Http\Client\Response;
 use Staysvel\Lib\Booking;
 use Staysvel\Lib\Calendar;
 use Staysvel\Lib\Content;
+use Staysvel\Lib\Doc;
 use Staysvel\Lib\Finance;
 use Staysvel\Lib\Price;
 use Staysvel\Lib\Setting;
 use Staysvel\Lib\Translation;
-use Illuminate\Http\Client\Response;
 
 class Stays
 {
@@ -20,6 +21,11 @@ class Stays
         self::$timeout = $timeoutInSeconds;
 
         return new static;
+    }
+
+    public static function docs(): Doc
+    {
+        return (new Doc())->timeout(self::$timeout);
     }
 
     public static function bookRequest(array $parameters = []): Response
