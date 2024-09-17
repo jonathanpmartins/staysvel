@@ -28,11 +28,15 @@ class Http
     {
         if ($this->isXlsx)
         {
-            $client = HttpClient::staysXlsx()->timeout($this->timeout);
+            $client = HttpClient::staysXlsx()
+                ->timeout($this->timeout)
+                ->connectTimeout($this->timeout);
         }
         else
         {
-            $client = HttpClient::stays()->timeout($this->timeout);
+            $client = HttpClient::stays()
+                ->timeout($this->timeout)
+                ->connectTimeout($this->timeout);
         }
 
         return $client->get($uri, $parameters);
@@ -40,16 +44,25 @@ class Http
 
     public function post(string $uri, array $parameters = []): Response
     {
-        return HttpClient::stays()->timeout($this->timeout)->post($uri, $parameters);
+        return HttpClient::stays()
+            ->timeout($this->timeout)
+            ->connectTimeout($this->timeout)
+            ->post($uri, $parameters);
     }
 
     public function patch(string $uri, array $parameters = []): Response
     {
-        return HttpClient::stays()->timeout($this->timeout)->patch($uri, $parameters);
+        return HttpClient::stays()
+            ->timeout($this->timeout)
+            ->connectTimeout($this->timeout)
+            ->patch($uri, $parameters);
     }
 
     public function delete(string $uri): Response
     {
-        return HttpClient::stays()->timeout($this->timeout)->delete($uri);
+        return HttpClient::stays()
+            ->timeout($this->timeout)
+            ->connectTimeout($this->timeout)
+            ->delete($uri);
     }
 }
