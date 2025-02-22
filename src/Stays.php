@@ -23,14 +23,14 @@ class Stays
         return new static;
     }
 
-    public static function docs(): Doc
-    {
-        return (new Doc())->timeout(self::$timeout);
-    }
-
     public static function bookRequest(array $parameters = []): Response
     {
         return (new Http())->timeout(self::$timeout)->post('/book-request', $parameters);
+    }
+
+    public static function docs(): Doc
+    {
+        return (new Doc())->timeout(self::$timeout);
     }
 
     public static function booking(): Booking
