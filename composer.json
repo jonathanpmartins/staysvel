@@ -26,7 +26,7 @@
         "illuminate/validation": "^9.0|^10.0|^11|^12"
     },
     "require-dev": {
-        "pestphp/pest": "^3.0",
+        "pestphp/pest": "^4.0",
         "orchestra/testbench": "^10.0"
     },
     "config": {
