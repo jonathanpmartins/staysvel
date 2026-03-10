@@ -1,0 +1,3306 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "External API for managing system",
+    "version": "1.0.0",
+    "title": "Stays API"
+  },
+  "servers": [
+    {
+      "url": "/external/v1",
+      "description": "Main (production) server."
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "paths": {
+    "/content/listings": {
+      "get": {
+        "summary": "Returns listings list.",
+        "tags": [
+          "Content"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "Number of records to skip for pagination.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of records to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Listing activity status.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ListingStatus"
+              }
+            },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "in": "query",
+            "name": "groupId",
+            "description": "Listing's group identifier.",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "rel",
+            "description": "Listing's relation. Allows to filter master/child listings",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "master",
+                "child"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "propertyId",
+            "description": "Property identifier.",
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "listingCategories",
+            "description": "Filter by listing categories/types.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "vacationRental",
+                  "longTermRental",
+                  "forSale"
+                ]
+              }
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListingBaseWithGroupsAndOTAChannels"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new listing item.",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "internalName",
+                  "_idtype",
+                  "subtype"
+                ],
+                "properties": {
+                  "internalName": {
+                    "type": "string",
+                    "description": "Internal name.",
+                    "example": "002"
+                  },
+                  "_idproperty": {
+                    "$ref": "#/components/schemas/UniqID",
+                    "description": "Defines property identifier in what listing will be included"
+                  },
+                  "_idpropertyType": {
+                    "$ref": "#/components/schemas/UniqID",
+                    "description": "Defines property type for single-unit listing"
+                  },
+                  "_idtype": {
+                    "$ref": "#/components/schemas/UniqID",
+                    "description": "Defines listing type"
+                  },
+                  "subtype": {
+                    "$ref": "#/components/schemas/ListingSubtype"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingDetailed"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/listings/{listingId}": {
+      "get": {
+        "summary": "returns listing item",
+        "tags": [
+          "Content"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "listingId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "returns listing specified by identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingDetailedWithOTAChannels"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a listing item.",
+        "tags": [
+          "Content"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "listingId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ListingBaseEditable"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ListingDetailedEditable"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingDetailed"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/properties": {
+      "get": {
+        "summary": "returns properties list",
+        "tags": [
+          "Content"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "number of records to skip for pagination",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "maximum number of records to return",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "property activity status",
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/PropertyStatus"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PropertyStatus"
+                  }
+                }
+              ]
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "the request was successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PropertyBase"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "adds a property item",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "internalName",
+                  "_idtype"
+                ],
+                "properties": {
+                  "internalName": {
+                    "type": "string"
+                  },
+                  "_idtype": {
+                    "$ref": "#/components/schemas/UniqID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "item created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PropertyDetailed"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/properties/{propertyId}": {
+      "get": {
+        "summary": "returns property item",
+        "tags": [
+          "Content"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "propertyId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "returns property specified by identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PropertyDetailed"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "update a property item",
+        "tags": [
+          "Content"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "propertyId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PropertyDetailedEditable"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PropertyDetailed"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/listing-rooms/{listingId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "listingId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "returns room list",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "search results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListingRoom"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "adds a room item",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListingRoom"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "item created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingRoom"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/listing-rooms/{listingId}/{roomId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "listingId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        },
+        {
+          "in": "path",
+          "name": "roomId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "returns room by _id",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingRoom"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "update a room",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListingRoom"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingRoom"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "removed room by _id",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingRoom"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/upload-images": {
+      "post": {
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "images": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "format": "binary"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "format": "binary"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UniqID"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/groups": {
+      "get": {
+        "summary": "Returns groups list.",
+        "tags": [
+          "Content"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "Number of records to skip for pagination.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of records to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Group status.",
+            "schema": {
+              "$ref": "#/components/schemas/GroupStatus"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Adds a group item",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupBodyNew"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "item created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/groups/{groupId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "groupId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns group item.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a group",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupItem"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "item updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove group by _id",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad input parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/clone-groups/{masterId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "masterId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns clone group.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update clone group.",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete clone group.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/clone-groups": {
+      "post": {
+        "summary": "Create clone group.",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "_idmaster",
+                  "items"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "_idmaster": {
+                    "$ref": "#/components/schemas/UniqID"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "internalName"
+                      ],
+                      "properties": {
+                        "internalName": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/clone-groups/{masterId}/items": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "masterId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get clone group members.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneGroupItems"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add new member to clone group.",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "internalName"
+                ],
+                "properties": {
+                  "internalName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneGroupItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/clone-groups/{masterId}/items/{listingId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "masterId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        },
+        {
+          "in": "path",
+          "name": "listingId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get clone group member.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneGroupItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Modify visibility and status of clone group member.",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "visible": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneGroupItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete member from clone group.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CloneGroupItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/price-groups/{masterId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "masterId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns price group.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update price group.",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete price group.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/price-groups": {
+      "post": {
+        "summary": "Create price group.",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "_idmaster",
+                  "items"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "_idmaster": {
+                    "$ref": "#/components/schemas/UniqID"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "_idlisting"
+                      ],
+                      "properties": {
+                        "_idlisting": {
+                          "$ref": "#/components/schemas/UniqID"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceGroup"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/price-groups/{masterId}/items": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "masterId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get price group members.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceGroupItems"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add new member to price group.",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "_idlisting"
+                ],
+                "properties": {
+                  "_idlisting": {
+                    "$ref": "#/components/schemas/UniqID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceGroupItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/price-groups/{masterId}/items/{listingId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "masterId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        },
+        {
+          "in": "path",
+          "name": "listingId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get price group member.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceGroupItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Modify visibility of price group member.",
+        "tags": [
+          "Content"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "visible": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceGroupItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete member from price group.",
+        "tags": [
+          "Content"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceGroupItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "additional": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "streetNumber": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "stateCode": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
+      "Amenity": {
+        "type": "object",
+        "required": [
+          "_id"
+        ],
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      },
+      "AmenityList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Amenity"
+        }
+      },
+      "AppCustomFieldForTarget": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_idfield": {
+              "$ref": "#/components/schemas/UniqID"
+            },
+            "val": {}
+          }
+        }
+      },
+      "ClientPhones": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "iso": {
+              "$ref": "#/components/schemas/Phonenumber"
+            },
+            "rawNum": {
+              "type": "string",
+              "description": "Raw phone number. This field is returned when system couldn't validate a phone number provided by client"
+            },
+            "hint": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CloneGroup": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Internal group name"
+          },
+          "_idmaster": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "visibleItems": {
+            "type": "number",
+            "description": "Count of visible group items"
+          },
+          "totalItems": {
+            "type": "number",
+            "description": "Count of total group items"
+          },
+          "items": {
+            "$ref": "#/components/schemas/CloneGroupItems"
+          }
+        }
+      },
+      "CloneGroupItem": {
+        "type": "object",
+        "required": [
+          "internalName"
+        ],
+        "properties": {
+          "internalName": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ListingStatus"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "_idlisting": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      },
+      "CloneGroupItems": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/CloneGroupItem"
+        }
+      },
+      "CustomFields": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "DualID": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          {
+            "$ref": "#/components/schemas/InternalID"
+          }
+        ],
+        "description": "Dual unique identifier, accepts long and short identifiers transparently"
+      },
+      "ErrorBase": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "text of error"
+          }
+        }
+      },
+      "GroupBase": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Unique object identifier"
+          },
+          "status": {
+            "$ref": "#/components/schemas/GroupStatus"
+          },
+          "internalName": {
+            "type": "string",
+            "description": "Internal Name. The name you can search for within the system."
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupType"
+            }
+          },
+          "_mstitle": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage group title"
+          },
+          "listingIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        }
+      },
+      "GroupBodyNew": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "internalName"
+            ],
+            "properties": {
+              "internalName": {
+                "type": "string",
+                "description": "Internal name.",
+                "example": "Group"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/GroupBase"
+          }
+        ]
+      },
+      "GroupItem": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Unique object identifier"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/GroupBase"
+          }
+        ]
+      },
+      "GroupStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "inactive"
+        ]
+      },
+      "GroupType": {
+        "type": "string",
+        "enum": [
+          "system",
+          "front",
+          "communication",
+          "highlight"
+        ]
+      },
+      "InternalID": {
+        "type": "string",
+        "pattern": "^([A-Z]{2}[0-9]{2,4}[A-Z]{1})$",
+        "description": "Short identifier that uniq for certain entity",
+        "example": "XQ02F"
+      },
+      "LatLng": {
+        "type": "object",
+        "required": [
+          "_f_lat",
+          "_f_lng"
+        ],
+        "properties": {
+          "_f_lat": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "_f_lng": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          }
+        }
+      },
+      "ListingBase": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Unique object identifier"
+              },
+              "id": {
+                "$ref": "#/components/schemas/InternalID",
+                "description": "Internal short identifier. Unique for each entity"
+              },
+              "_idproperty": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Unique property identifier"
+              },
+              "_idpropertyType": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Property type identifier for single-unit listing"
+              },
+              "_t_propertyTypeMeta": {
+                "type": "object",
+                "properties": {
+                  "_mstitle": {
+                    "$ref": "#/components/schemas/MultiLang"
+                  }
+                },
+                "description": "Meta object that contains extra info about property type"
+              },
+              "_idtype": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Listing type identifier"
+              },
+              "_t_typeMeta": {
+                "type": "object",
+                "properties": {
+                  "_mstitle": {
+                    "$ref": "#/components/schemas/MultiLang"
+                  }
+                },
+                "description": "Meta object that contains extra info about listing type"
+              },
+              "subtype": {
+                "$ref": "#/components/schemas/ListingSubtype"
+              },
+              "status": {
+                "$ref": "#/components/schemas/ListingStatus"
+              },
+              "internalName": {
+                "type": "string",
+                "description": "Internal Name. The name you can search for within the system.",
+                "example": "002"
+              },
+              "_mstitle": {
+                "$ref": "#/components/schemas/MultiLang",
+                "description": "Multilanguage listing title"
+              },
+              "_msdesc": {
+                "$ref": "#/components/schemas/MultiLang",
+                "description": "Multilanguage listing description"
+              },
+              "_i_maxGuests": {
+                "type": "integer",
+                "description": "Listing capacity"
+              },
+              "_i_rooms": {
+                "type": "integer",
+                "description": "Listing rooms number"
+              },
+              "_i_beds": {
+                "type": "integer",
+                "description": "Listing beds number"
+              },
+              "_f_bathrooms": {
+                "type": "number",
+                "description": "Listing bathrooms number"
+              },
+              "address": {
+                "$ref": "#/components/schemas/Address",
+                "description": "Address object"
+              },
+              "latLng": {
+                "$ref": "#/components/schemas/LatLng",
+                "description": "GEO coordinates"
+              },
+              "_f_square": {
+                "type": "number",
+                "description": "Listing square"
+              },
+              "instantBooking": {
+                "type": "boolean",
+                "description": "Listing instant booking state"
+              },
+              "_idPriceGroupMaster": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Master listing identifier. If exists, means that this listing is in Vertical Price Group"
+              },
+              "_idCloneGroupMaster": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Master listing identifier. If exists, means that this listing is in Clone Group"
+              },
+              "_idPriceMaster": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Master listing identifier. If exists, means that this listing is in Horizontal Price Group (only inhertis prices from another listing)"
+              },
+              "_idold": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Old unique object identifier"
+              },
+              "listingCategories": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "vacationRental",
+                    "longTermRental",
+                    "forSale"
+                  ]
+                },
+                "description": "List of listing categories/types that define the property's usage and marketing purpose"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ListingBaseEditable"
+          }
+        ]
+      },
+      "ListingBaseEditable": {
+        "type": "object",
+        "properties": {
+          "_idproperty": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Unique property identifier"
+          },
+          "_idtype": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Listing type identifier"
+          },
+          "subtype": {
+            "$ref": "#/components/schemas/ListingSubtype"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ListingStatus"
+          },
+          "internalName": {
+            "type": "string",
+            "description": "Internal Name. The name you can search for within the system.",
+            "example": "002"
+          },
+          "_mstitle": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing title"
+          },
+          "internalNote": {
+            "type": "string",
+            "description": "Internal Note. The note is internal to the system and is not visible to the customer.",
+            "example": "Internal Note"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address",
+            "description": "Address object"
+          },
+          "latLng": {
+            "$ref": "#/components/schemas/LatLng",
+            "description": "GEO coordinates"
+          },
+          "_f_square": {
+            "type": "number",
+            "description": "Listing square"
+          }
+        }
+      },
+      "ListingBaseWithGroups": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListingBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "groupIds": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UniqID"
+                },
+                "description": "List of groups related to listing"
+              }
+            }
+          }
+        ]
+      },
+      "ListingBaseWithGroupsAndOTAChannels": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListingBaseWithGroups"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "otaChannels": {
+                "$ref": "#/components/schemas/OTAChannelsList"
+              }
+            }
+          }
+        ]
+      },
+      "ListingDetailed": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListingBase"
+          },
+          {
+            "$ref": "#/components/schemas/ListingDetailedEditable"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "_t_mainImageMeta": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "image uri"
+                  }
+                },
+                "description": "Meta object that contains accessible information about main image"
+              },
+              "_t_imagesMeta": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "description": "image uri"
+                    },
+                    "_msname": {
+                      "$ref": "#/components/schemas/MultiLang",
+                      "description": "Image caption"
+                    },
+                    "area": {
+                      "type": "string",
+                      "enum": [
+                        "main",
+                        "room",
+                        "surrounding"
+                      ],
+                      "description": "Provides information about image location"
+                    }
+                  }
+                },
+                "description": "Meta object that contains extended information about all listing images"
+              },
+              "owner": {
+                "$ref": "#/components/schemas/ListingOwnerInfo"
+              },
+              "isPriceGroupMaster": {
+                "type": "boolean",
+                "description": "Indicates if listing is master in price group"
+              },
+              "isCloneGroupMaster": {
+                "type": "boolean",
+                "description": "Indicates if listing is master in clone group"
+              }
+            }
+          }
+        ]
+      },
+      "ListingDetailedEditable": {
+        "type": "object",
+        "properties": {
+          "_mshouserules": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing house rules"
+          },
+          "_mssummary": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing features of the space and neighborhood"
+          },
+          "_msnotes": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing additional details for the guest to know."
+          },
+          "_msspace": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing what makes it unique, and how many people does it comfortably fit."
+          },
+          "_msaccess": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing information about what parts of the space the guests will be able to access."
+          },
+          "_msinteraction": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing information how much the Host will interact with the guests, and if the Host will be present during the guest stay."
+          },
+          "_msneighborhood_overview": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing information about the neighborhood and surrounding region. Suggestions about what guests should experience & do."
+          },
+          "_mstransit": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing information on getting to the property. Is there convenient public transit? Is parking included with the listing or nearby? How does the guest get to the listing from the airport?"
+          },
+          "amenities": {
+            "$ref": "#/components/schemas/AmenityList",
+            "description": "Listing amenities"
+          },
+          "propertyAmenities": {
+            "$ref": "#/components/schemas/AmenityList",
+            "description": "Property amenities for single unit listing"
+          },
+          "customFields": {
+            "$ref": "#/components/schemas/CustomFields",
+            "description": "Custom fields added"
+          },
+          "images": {
+            "$ref": "#/components/schemas/ListingRoomImages",
+            "description": "Listing images"
+          },
+          "_idmainImage": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Listing main image identifier"
+          },
+          "appCustomFields": {
+            "$ref": "#/components/schemas/AppCustomFieldForTarget"
+          },
+          "customhtml": {
+            "type": "string",
+            "description": "Custom HTML to website"
+          },
+          "_f_commercialPriority": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 5,
+            "description": "Commercial priority rating for the listing",
+            "example": 4.5
+          }
+        }
+      },
+      "ListingDetailedWithOTAChannels": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListingDetailed"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "otaChannels": {
+                "$ref": "#/components/schemas/OTAChannelsList"
+              }
+            }
+          }
+        ]
+      },
+      "ListingOwnerInfo": {
+        "type": "object",
+        "description": "Listing owner info",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Owner name"
+          },
+          "phones": {
+            "$ref": "#/components/schemas/ClientPhones"
+          }
+        }
+      },
+      "ListingRoom": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_idtype": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_idlisting": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "beds": {
+            "$ref": "#/components/schemas/ListingRoomBeds"
+          },
+          "images": {
+            "$ref": "#/components/schemas/ListingRoomImages"
+          },
+          "inventory": {
+            "$ref": "#/components/schemas/ListingRoomInventory"
+          }
+        }
+      },
+      "ListingRoomBed": {
+        "type": "object",
+        "required": [
+          "_id",
+          "_i_count"
+        ],
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_i_count": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "ListingRoomBeds": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ListingRoomBed"
+        }
+      },
+      "ListingRoomImages": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        }
+      },
+      "ListingRoomInventory": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ListingRoomInventoryItem"
+        }
+      },
+      "ListingRoomInventoryItem": {
+        "type": "object",
+        "required": [
+          "_idname",
+          "_i_qnt",
+          "_idcondName"
+        ],
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_idname": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_i_qnt": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "_idcondName": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "ListingStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "hidden",
+          "inactive",
+          "draft"
+        ]
+      },
+      "ListingSubtype": {
+        "type": "string",
+        "enum": [
+          "private_room",
+          "entire_home",
+          "shared_room"
+        ],
+        "description": "Sub-type of this single unit."
+      },
+      "MultiLang": {
+        "type": "object",
+        "properties": {
+          "en_US": {
+            "type": "string"
+          },
+          "pt_BR": {
+            "type": "string"
+          },
+          "de_DE": {
+            "type": "string"
+          },
+          "es_ES": {
+            "type": "string"
+          },
+          "pt_PT": {
+            "type": "string"
+          },
+          "ru_RU": {
+            "type": "string"
+          },
+          "sv_SE": {
+            "type": "string"
+          },
+          "it_IT": {
+            "type": "string"
+          },
+          "fr_FR": {
+            "type": "string"
+          },
+          "el_GR": {
+            "type": "string"
+          }
+        },
+        "minProperties": 1,
+        "description": "Used for describing multilanguage data. Keys of the object are ISO locale code"
+      },
+      "OTAChannel": {
+        "description": "Details of an OTA channel that the listing is connected to",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "Airbnb",
+              "B2b",
+              "Bookingcom",
+              "Decolar",
+              "Expedia",
+              "GoogleVR",
+              "Homeaway",
+              "HVMI",
+              "Website"
+            ]
+          }
+        }
+      },
+      "OTAChannelsList": {
+        "description": "List of OTA channels that the listing is connected to",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/OTAChannel"
+        }
+      },
+      "Phonenumber": {
+        "type": "string",
+        "pattern": "^\\+(\\d+){7,23}$",
+        "example": "+00000000000",
+        "minLength": 8,
+        "maxLength": 24
+      },
+      "PriceGroup": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Internal group name"
+          },
+          "_idmaster": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "visibleItems": {
+            "type": "number",
+            "description": "Count of visible group items"
+          },
+          "totalItems": {
+            "type": "number",
+            "description": "Count of total group items"
+          },
+          "items": {
+            "$ref": "#/components/schemas/PriceGroupItems"
+          }
+        }
+      },
+      "PriceGroupItem": {
+        "type": "object",
+        "required": [
+          "_idlisting"
+        ],
+        "properties": {
+          "_idlisting": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ListingStatus"
+          },
+          "visible": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PriceGroupItems": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PriceGroupItem"
+        }
+      },
+      "PropertyBase": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Unique object identifier"
+              },
+              "id": {
+                "$ref": "#/components/schemas/InternalID",
+                "description": "Internal short identifier. Unique for each entity"
+              },
+              "_t_typeMeta": {
+                "type": "object",
+                "properties": {
+                  "_mstitle": {
+                    "$ref": "#/components/schemas/MultiLang"
+                  }
+                },
+                "description": "Meta object that contains extra info about property type"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/PropertyBaseEditable"
+          }
+        ]
+      },
+      "PropertyBaseEditable": {
+        "type": "object",
+        "properties": {
+          "_idtype": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Property type identifier"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PropertyStatus"
+          },
+          "internalName": {
+            "type": "string",
+            "description": "Internal Name. The name you can search for within the system.",
+            "example": "002"
+          },
+          "_mstitle": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage property title"
+          },
+          "_msdesc": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage property description"
+          },
+          "_msneighborhood_overview": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing information about the neighborhood and surrounding region. Suggestions about what guests should experience & do."
+          },
+          "_mstransit": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing information on getting to the property. Is there convenient public transit? Is parking included with the listing or nearby? How does the guest get to the listing from the airport?"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address",
+            "description": "Address object"
+          },
+          "latLng": {
+            "$ref": "#/components/schemas/LatLng",
+            "description": "GEO coordinates"
+          }
+        }
+      },
+      "PropertyDetailed": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBase"
+          },
+          {
+            "$ref": "#/components/schemas/PropertyDetailedEditable"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "_t_mainImageMeta": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "image uri"
+                  }
+                },
+                "description": "Meta object that contains accessible information about main image"
+              },
+              "_t_imagesMeta": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "description": "image uri"
+                    },
+                    "_msname": {
+                      "$ref": "#/components/schemas/MultiLang",
+                      "description": "Image caption"
+                    },
+                    "area": {
+                      "type": "string",
+                      "enum": [
+                        "main",
+                        "surrounding"
+                      ],
+                      "description": "Provides information about image location"
+                    }
+                  }
+                },
+                "description": "Meta object that contains extended information about all listing images"
+              }
+            }
+          }
+        ]
+      },
+      "PropertyDetailedEditable": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PropertyBaseEditable"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "amenities": {
+                "$ref": "#/components/schemas/AmenityList",
+                "description": "Property amenities"
+              },
+              "images": {
+                "$ref": "#/components/schemas/ListingRoomImages",
+                "description": "Property images"
+              },
+              "_idmainImage": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Property main image identifier"
+              }
+            }
+          }
+        ]
+      },
+      "PropertyStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "inactive",
+          "draft"
+        ]
+      },
+      "UniqID": {
+        "type": "string",
+        "pattern": "^([a-f0-9]){24}$",
+        "description": "Hexadecimal unique identifier",
+        "example": "5dee464910450609ca7ea2d7"
+      }
+    }
+  }
+}

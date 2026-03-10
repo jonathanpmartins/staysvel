@@ -1,0 +1,458 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "External API for managing system",
+    "version": "1.0.0",
+    "title": "Stays API"
+  },
+  "servers": [
+    {
+      "url": "/external/v1",
+      "description": "Main (production) server."
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "paths": {
+    "/settings/global/pricing-model": {
+      "get": {
+        "summary": "Returns pricing model",
+        "tags": [
+          "Global settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Pricing Model",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BasicRatePlansPricingModel"
+                    },
+                    {
+                      "$ref": "#/components/schemas/BasicLosdPricingModel"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AdvancedPricingModel"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/global/listing-custom-fields": {
+      "get": {
+        "summary": "Returns custom fields",
+        "tags": [
+          "Global settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Custom fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "_msname": {
+                        "$ref": "#/components/schemas/MultiLang"
+                      },
+                      "varName": {
+                        "type": "string"
+                      },
+                      "varPreview": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add custom fields",
+        "tags": [
+          "Global settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "varName",
+                  "varPreview"
+                ],
+                "properties": {
+                  "_msname": {
+                    "$ref": "#/components/schemas/MultiLang"
+                  },
+                  "varName": {
+                    "type": "string"
+                  },
+                  "varPreview": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Custom fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "_msname": {
+                        "$ref": "#/components/schemas/MultiLang"
+                      },
+                      "varName": {
+                        "type": "string"
+                      },
+                      "varPreview": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update custom fields",
+        "tags": [
+          "Global settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "_msname": {
+                    "$ref": "#/components/schemas/MultiLang"
+                  },
+                  "varName": {
+                    "type": "string"
+                  },
+                  "varPreview": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Custom fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "_msname": {
+                        "$ref": "#/components/schemas/MultiLang"
+                      },
+                      "varName": {
+                        "type": "string"
+                      },
+                      "varPreview": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete custom fields",
+        "tags": [
+          "Global settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Custom fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "_msname": {
+                        "$ref": "#/components/schemas/MultiLang"
+                      },
+                      "varName": {
+                        "type": "string"
+                      },
+                      "varPreview": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "AdvancedPricingModel": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "advanced"
+            ],
+            "description": "Price model type"
+          }
+        }
+      },
+      "BasicLosdPricingModel": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "basic"
+            ],
+            "description": "Pricing model type"
+          },
+          "subtype": {
+            "type": "string",
+            "enum": [
+              "losd"
+            ],
+            "description": "Pricing model subtype. Applicable only for basic price model"
+          },
+          "baseRate": {
+            "type": "object",
+            "properties": {
+              "_i_min": {
+                "type": "number",
+                "description": "Minimum nights"
+              }
+            }
+          },
+          "lengthOfStayDiscounts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_i_min": {
+                  "type": "number",
+                  "description": "Minimum nights"
+                },
+                "_f_percent": {
+                  "type": "number",
+                  "description": "Discount percent"
+                }
+              }
+            },
+            "description": "Length of stays discounts"
+          }
+        }
+      },
+      "BasicRatePlansPricingModel": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "basic"
+            ],
+            "description": "Pricing model type"
+          },
+          "subtype": {
+            "type": "string",
+            "enum": [
+              "rateplans"
+            ],
+            "description": "Pricing model subtype. Applicable only for basic price model"
+          },
+          "ratePlans": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_i_min": {
+                  "type": "number",
+                  "description": "Minimum nights"
+                }
+              }
+            },
+            "description": "Rate plans. Applicable only for rateplans subtype"
+          }
+        }
+      },
+      "ErrorBase": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "text of error"
+          }
+        }
+      },
+      "MultiLang": {
+        "type": "object",
+        "properties": {
+          "en_US": {
+            "type": "string"
+          },
+          "pt_BR": {
+            "type": "string"
+          },
+          "de_DE": {
+            "type": "string"
+          },
+          "es_ES": {
+            "type": "string"
+          },
+          "pt_PT": {
+            "type": "string"
+          },
+          "ru_RU": {
+            "type": "string"
+          },
+          "sv_SE": {
+            "type": "string"
+          },
+          "it_IT": {
+            "type": "string"
+          },
+          "fr_FR": {
+            "type": "string"
+          },
+          "el_GR": {
+            "type": "string"
+          }
+        },
+        "minProperties": 1,
+        "description": "Used for describing multilanguage data. Keys of the object are ISO locale code"
+      }
+    }
+  }
+}

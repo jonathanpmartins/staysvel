@@ -1,0 +1,608 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "External API for managing system",
+    "version": "1.0.0",
+    "title": "Stays API"
+  },
+  "servers": [
+    {
+      "url": "/external/v1",
+      "description": "Main (production) server."
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "paths": {
+    "/settings/app/listing-custom-fields": {
+      "get": {
+        "deprecated": true,
+        "summary": "Returns app custom fields.",
+        "tags": [
+          "App settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of app fileds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AppCustomField"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "deprecated": true,
+        "summary": "Create app custom field",
+        "tags": [
+          "App settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AppCustomField"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "internalName"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Field item has been created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppCustomField"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/app/listing-custom-fields/{fieldId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "fieldId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "deprecated": true,
+        "summary": "Returns app custom field",
+        "tags": [
+          "App settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Field details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppCustomField"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "deprecated": true,
+        "summary": "Modify app custom field",
+        "tags": [
+          "App settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppCustomField"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppCustomField"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "deprecated": true,
+        "summary": "Delete app custom field",
+        "tags": [
+          "App settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "the item has been deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppCustomField"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/app/custom-fields": {
+      "parameters": [
+        {
+          "in": "query",
+          "name": "target",
+          "required": true,
+          "description": "Target for custom fields configuration",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "listing",
+              "reservation"
+            ]
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns custom fields settings for app's listings.",
+        "tags": [
+          "App settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of app fileds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AppCustomField"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create custom field settings for app's listings",
+        "tags": [
+          "App settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/AppCustomField"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "internalName"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Field item has been created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppCustomField"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/app/custom-fields/{fieldId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "fieldId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        },
+        {
+          "in": "query",
+          "name": "target",
+          "required": true,
+          "description": "Target for custom fields configuration",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "listing",
+              "reservation"
+            ]
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns single custom field settings for app's listing.",
+        "tags": [
+          "App settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "Field details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppCustomField"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Modify custom field settings for app's listings.",
+        "tags": [
+          "App settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppCustomField"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppCustomField"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete app custom field settings",
+        "tags": [
+          "App settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "the item has been deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppCustomField"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input parameter!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "AppCustomField": {
+        "type": "object",
+        "properties": {
+          "_idfield": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "App custom field internal identifier"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "integer",
+              "number",
+              "link"
+            ],
+            "description": "Custom field value type"
+          },
+          "internalName": {
+            "type": "string",
+            "pattern": "^[A-Za-z]([A-Za-z0-9_])+$",
+            "description": "App custom field internal name"
+          },
+          "_msname": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "App custom field multilanguage name"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "public",
+              "hidden"
+            ],
+            "description": "Indicates visibility of the custom field, default is 'public'"
+          }
+        }
+      },
+      "ErrorBase": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "text of error"
+          }
+        }
+      },
+      "MultiLang": {
+        "type": "object",
+        "properties": {
+          "en_US": {
+            "type": "string"
+          },
+          "pt_BR": {
+            "type": "string"
+          },
+          "de_DE": {
+            "type": "string"
+          },
+          "es_ES": {
+            "type": "string"
+          },
+          "pt_PT": {
+            "type": "string"
+          },
+          "ru_RU": {
+            "type": "string"
+          },
+          "sv_SE": {
+            "type": "string"
+          },
+          "it_IT": {
+            "type": "string"
+          },
+          "fr_FR": {
+            "type": "string"
+          },
+          "el_GR": {
+            "type": "string"
+          }
+        },
+        "minProperties": 1,
+        "description": "Used for describing multilanguage data. Keys of the object are ISO locale code"
+      },
+      "UniqID": {
+        "type": "string",
+        "pattern": "^([a-f0-9]){24}$",
+        "description": "Hexadecimal unique identifier",
+        "example": "5dee464910450609ca7ea2d7"
+      }
+    }
+  }
+}

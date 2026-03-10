@@ -1,0 +1,2000 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "External API for managing system",
+    "version": "1.0.0",
+    "title": "Stays API"
+  },
+  "servers": [
+    {
+      "url": "/external/v1",
+      "description": "Main (production) server."
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "paths": {
+    "/finance/payment-providers": {
+      "get": {
+        "summary": "Returns finance payment providers.",
+        "tags": [
+          "Finance"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Payment provider status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "inactive"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array payment providers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentProvidersList"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new payment provider.",
+        "tags": [
+          "Finance"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PaymentProviderUser"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PaymentProviderBank"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "user": "#/components/schemas/PaymentProviderUser",
+                    "bank": "#/components/schemas/PaymentProviderBank"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payment provider item has been created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentProvider"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Item already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/payment-providers/{providerId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "providerId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns finance payment providers by id.",
+        "tags": [
+          "Finance"
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array payment providers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentProvider"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update payment provider.",
+        "tags": [
+          "Finance"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PaymentProviderUser"
+                  },
+                  {
+                    "$ref": "#/components/schemas/PaymentProviderBank"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "user": "#/components/schemas/PaymentProviderUser",
+                    "bank": "#/components/schemas/PaymentProviderBank"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment provider updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentProvider"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid input, object invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/owners": {
+      "parameters": [
+        {
+          "in": "query",
+          "required": true,
+          "name": "from",
+          "description": "Start date for searching by owner",
+          "schema": {
+            "$ref": "#/components/schemas/DateString"
+          }
+        },
+        {
+          "in": "query",
+          "required": true,
+          "name": "to",
+          "description": "End date for searching by owner",
+          "schema": {
+            "$ref": "#/components/schemas/DateString"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns finance owners.",
+        "tags": [
+          "Finance"
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array owners",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnersList"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/owners/{ownerId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "ownerId",
+          "description": "Owner id",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        },
+        {
+          "in": "query",
+          "required": true,
+          "name": "from",
+          "description": "Start date for searching by owner",
+          "schema": {
+            "$ref": "#/components/schemas/DateString"
+          }
+        },
+        {
+          "in": "query",
+          "required": true,
+          "name": "to",
+          "description": "End date for searching by owner",
+          "schema": {
+            "$ref": "#/components/schemas/DateString"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns finance owner by id.",
+        "tags": [
+          "Finance"
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Owner"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/owners/{ownerId}/{listingId}": {
+      "get": {
+        "summary": "Returns finance owner by id and listing id.",
+        "tags": [
+          "Finance"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ownerId",
+            "description": "Owner id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "listingId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "from",
+            "description": "Start date for searching by owner",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "required": true,
+            "name": "to",
+            "description": "End date for searching by owner",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON owner",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OwnerListing"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Creates a finance accounting with owner id and listing id.",
+        "tags": [
+          "Finance"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ownerId",
+            "description": "Owner id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "listingId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "date",
+                  "transactionName",
+                  "type",
+                  "_mcval",
+                  "status"
+                ],
+                "properties": {
+                  "date": {
+                    "description": "Date of accounting",
+                    "$ref": "#/components/schemas/DateString"
+                  },
+                  "transactionName": {
+                    "description": "Transaction name",
+                    "type": "string"
+                  },
+                  "publicNote": {
+                    "description": "Public note",
+                    "type": "string"
+                  },
+                  "internalNote": {
+                    "description": "Internal note",
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Type of accounting",
+                    "enum": [
+                      "credit",
+                      "debit"
+                    ]
+                  },
+                  "_mcval": {
+                    "description": "Accounting value",
+                    "$ref": "#/components/schemas/MultiCurrency"
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Status of accounting",
+                    "enum": [
+                      "paid",
+                      "await"
+                    ]
+                  },
+                  "paymentDate": {
+                    "description": "Date of accounting payment",
+                    "$ref": "#/components/schemas/DateString"
+                  },
+                  "_mcfee": {
+                    "description": "Accounting fee",
+                    "$ref": "#/components/schemas/MultiCurrency"
+                  },
+                  "_mctax": {
+                    "description": "Accounting tax",
+                    "$ref": "#/components/schemas/MultiCurrency"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accounting"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/owners/{ownerId}/{listingId}/{accountingId}": {
+      "patch": {
+        "summary": "Edits a finance accounting with owner id, listing id, accounting id.",
+        "tags": [
+          "Finance"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "ownerId",
+            "description": "Owner id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "listingId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          },
+          {
+            "in": "path",
+            "name": "accountingId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/AccountingBodyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "An accounting has been edited successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Accounting"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/positions": {
+      "get": {
+        "summary": "Returns finance positions.",
+        "tags": [
+          "Finance"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "description": "Type of position",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "credit",
+                "debit"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array finance positions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PositionsList"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/accounting-transactions": {
+      "post": {
+        "summary": "Creates a finance accounting transaction.",
+        "tags": [
+          "Finance"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "transactionName",
+                  "categoryId",
+                  "type",
+                  "_mcval",
+                  "competenceDate",
+                  "expirationDate",
+                  "responsible"
+                ],
+                "$ref": "#/components/schemas/AccountingTransactionPOSTRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "An accounting transaction has been created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountingTransaction"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Returns transactions list.",
+        "tags": [
+          "Finance"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "description": "Start date to filter.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "description": "End date to filter.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "dateType",
+            "required": true,
+            "description": "Criteria for applying dates range",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "creation",
+                "payment",
+                "expiration",
+                "competence"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "description": "Type of accounting",
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "credit",
+                    "debit"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "credit",
+                      "debit"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "Number of records to skip for pagination.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of records to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            }
+          },
+          {
+            "in": "query",
+            "name": "listingId",
+            "description": "Listing identifier",
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "propertyId",
+            "description": "Property identifier",
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ownerId",
+            "description": "Landlord identifier",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "bankAccountId",
+            "description": "Bank account identifier",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "categoryId",
+            "description": "Category identifier",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "operatorId",
+            "description": "Operator identifier",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "responsibleId",
+            "description": "Responsible identifier",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccountingTransactionDetailed"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finance/accounting-transactions/{accountingTransactionId}": {
+      "get": {
+        "summary": "Retrieve a specific accounting",
+        "tags": [
+          "Finance"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountingTransactionId",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Accounting transaction details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountingTransactionDetailed"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Edits a finance accounting transaction.",
+        "tags": [
+          "Finance"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountingTransactionId",
+            "description": "Accounting transaction id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/AccountingTransactionPATCHRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "An accounting transaction has been edited successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountingTransaction"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletes a finance accounting transaction.",
+        "description": "Deletes a finance accounting transaction. Cannot delete if the transaction has been paid. Remove the payment first with an update then delete the transaction.",
+        "tags": [
+          "Finance"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "accountingTransactionId",
+            "description": "Accounting transaction id",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Accounting transaction details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountingTransactionDetailed"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "Accounting": {
+        "description": "Details of accounting",
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "Accounting id",
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "date": {
+            "description": "Date of accounting",
+            "$ref": "#/components/schemas/DateString"
+          },
+          "internalName": {
+            "type": "string",
+            "description": "Internal Name of accounting",
+            "example": "002"
+          },
+          "transactionName": {
+            "description": "Transaction name",
+            "type": "string"
+          },
+          "publicNote": {
+            "description": "Public note",
+            "type": "string"
+          },
+          "internalNote": {
+            "description": "Internal note",
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of accounting",
+            "enum": [
+              "credit",
+              "debit",
+              "balance"
+            ]
+          },
+          "reserveId": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Reserve ID of accounting"
+          },
+          "_mcval": {
+            "description": "Accounting value",
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of accounting",
+            "enum": [
+              "paid",
+              "await",
+              "inbalance"
+            ]
+          },
+          "paymentDate": {
+            "description": "Date of accounting payment",
+            "$ref": "#/components/schemas/DateString"
+          },
+          "_mcfee": {
+            "description": "Accounting fee",
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "_mctax": {
+            "description": "Accounting tax",
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "_mcvalpaid": {
+            "description": "Accounting paid value",
+            "$ref": "#/components/schemas/MultiCurrency"
+          }
+        }
+      },
+      "AccountingBodyRequest": {
+        "description": "Details of accounting for body request",
+        "type": "object",
+        "properties": {
+          "date": {
+            "description": "Date of accounting",
+            "$ref": "#/components/schemas/DateString"
+          },
+          "transactionName": {
+            "description": "Transaction name",
+            "type": "string"
+          },
+          "publicNote": {
+            "description": "Public note",
+            "type": "string"
+          },
+          "internalNote": {
+            "description": "Internal note",
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of accounting",
+            "enum": [
+              "credit",
+              "debit"
+            ]
+          },
+          "_mcval": {
+            "description": "Accounting value",
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of accounting",
+            "enum": [
+              "paid",
+              "await"
+            ]
+          },
+          "paymentDate": {
+            "description": "Date of accounting payment",
+            "$ref": "#/components/schemas/DateString"
+          },
+          "_mcfee": {
+            "description": "Accounting fee",
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "_mctax": {
+            "description": "Accounting tax",
+            "$ref": "#/components/schemas/MultiCurrency"
+          }
+        }
+      },
+      "AccountingTransaction": {
+        "description": "Details of an accounting transaction",
+        "type": "object",
+        "properties": {
+          "transactionName": {
+            "type": "string",
+            "description": "The name of the transaction."
+          },
+          "internalNote": {
+            "type": "string",
+            "description": "Description of the transaction, can be used for internal notes or additional information."
+          },
+          "bankAccountId": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Bank account identifier for the transaction"
+          },
+          "competenceDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Date of the competence"
+          },
+          "expirationDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Date of the expiration"
+          },
+          "creationDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Date of the creation"
+          },
+          "listingId": {
+            "$ref": "#/components/schemas/DualID",
+            "description": "Listing identifier for the transaction"
+          },
+          "operatorId": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Operator identifier"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of transaction",
+            "enum": [
+              "credit",
+              "debit"
+            ]
+          },
+          "_mcval": {
+            "description": "Accounting transaction value",
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "categoryId": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Category identifier"
+          },
+          "companySplit": {
+            "type": "integer",
+            "description": "Percentage of the transaction that goes to the self. If 'both' is selected as responsible, this field is mandatory.",
+            "example": 40
+          },
+          "ownerSplit": {
+            "type": "integer",
+            "description": "Percentage of the transaction that goes to the owner. If 'both' is selected as responsible, this field is mandatory.",
+            "example": 60
+          },
+          "responsible": {
+            "type": "string",
+            "description": "Responsible person/agency for the transaction, mandatory for the split. Can be 'owner', 'company' or 'both'. If different from 'company' the listingId is mandatory. If 'both' the slipt between owner and company is a mandatory field.",
+            "enum": [
+              "owner",
+              "company",
+              "both"
+            ]
+          },
+          "paid": {
+            "type": "boolean",
+            "description": "Indicates if the transaction payment has ocurred. When true, payment and bankId fields are mandatory."
+          },
+          "payment": {
+            "type": "object",
+            "description": "Object that contains payment information",
+            "properties": {
+              "paymentDate": {
+                "$ref": "#/components/schemas/DateString",
+                "description": "Date of the payment"
+              },
+              "_mctax": {
+                "description": "Discount/Tax amount.",
+                "$ref": "#/components/schemas/MultiCurrency"
+              },
+              "_mcfee": {
+                "description": "Penalty/Fee amount.",
+                "$ref": "#/components/schemas/MultiCurrency"
+              },
+              "_mcvalpaid": {
+                "description": "Paid amount.",
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "_id": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Accounting Transaction Identifier"
+          }
+        }
+      },
+      "AccountingTransactionBaseRequest": {
+        "type": "object",
+        "properties": {
+          "transactionName": {
+            "type": "string",
+            "description": "The name of the transaction."
+          },
+          "internalNote": {
+            "type": "string",
+            "description": "Description of the transaction, can be used for internal notes or additional information."
+          },
+          "categoryId": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Category identifier"
+          },
+          "_mcval": {
+            "description": "Accounting transaction value",
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "competenceDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Date of the competence"
+          },
+          "expirationDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Date of the expiration"
+          },
+          "bankAccountId": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Bank account identifier for the transaction"
+          },
+          "responsible": {
+            "type": "string",
+            "description": "Responsible person/agency for the transaction, mandatory for the split. Can be 'owner', 'company' or 'both'. If different from 'company' the listingId is mandatory. If 'both' the slipt between owner and company is a mandatory field.",
+            "enum": [
+              "owner",
+              "company",
+              "both"
+            ]
+          },
+          "listingId": {
+            "$ref": "#/components/schemas/DualID",
+            "description": "Listing identifier for the transaction"
+          },
+          "companySplit": {
+            "type": "integer",
+            "description": "Percentage of the transaction that goes to the self. If 'both' is selected as responsible, this field is mandatory.",
+            "example": 40
+          },
+          "ownerSplit": {
+            "type": "integer",
+            "description": "Percentage of the transaction that goes to the owner. If 'both' is selected as responsible, this field is mandatory.",
+            "example": 60
+          },
+          "paid": {
+            "type": "boolean",
+            "description": "Indicates if the transaction payment has ocurred. When true, payment and bankId fields are mandatory."
+          },
+          "payment": {
+            "type": "object",
+            "description": "Object that contains payment information",
+            "properties": {
+              "paymentDate": {
+                "$ref": "#/components/schemas/DateString",
+                "description": "Date of the payment"
+              },
+              "_mctax": {
+                "description": "Discount/Tax amount.",
+                "$ref": "#/components/schemas/MultiCurrency"
+              },
+              "_mcfee": {
+                "description": "Penalty/Fee amount.",
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          }
+        }
+      },
+      "AccountingTransactionDetailed": {
+        "description": "Detailed accounting transaction",
+        "type": "object",
+        "properties": {
+          "transactionName": {
+            "type": "string",
+            "description": "The name of the transaction."
+          },
+          "bankAccountId": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Bank account identifier for the transaction"
+          },
+          "competenceDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Date of the competence"
+          },
+          "expirationDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Date of the expiration"
+          },
+          "creationDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Date of the creation"
+          },
+          "listingId": {
+            "$ref": "#/components/schemas/DualID",
+            "description": "Listing identifier for the transaction"
+          },
+          "operatorId": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Operator identifier"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of transaction",
+            "enum": [
+              "credit",
+              "debit",
+              "balance"
+            ]
+          },
+          "_mcval": {
+            "description": "Accounting transaction value",
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "categoryId": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Category identifier"
+          },
+          "companySplit": {
+            "type": "integer",
+            "description": "Percentage of the transaction that goes to the self. If 'both' is selected as responsible, this field is mandatory.",
+            "example": 40
+          },
+          "ownerSplit": {
+            "type": "integer",
+            "description": "Percentage of the transaction that goes to the owner. If 'both' is selected as responsible, this field is mandatory.",
+            "example": 60
+          },
+          "responsible": {
+            "type": "string",
+            "description": "Responsible person/agency for the transaction, mandatory for the split. Can be 'owner', 'company' or 'both'. If different from 'company' the listingId is mandatory. If 'both' the slipt between owner and company is a mandatory field.",
+            "enum": [
+              "owner",
+              "company",
+              "both"
+            ]
+          },
+          "paid": {
+            "type": "boolean",
+            "description": "Indicates if the transaction payment has ocurred. When true, payment and bankId fields are mandatory."
+          },
+          "payment": {
+            "type": "object",
+            "description": "Object that contains payment information",
+            "properties": {
+              "paymentDate": {
+                "$ref": "#/components/schemas/DateString",
+                "description": "Date of the payment"
+              },
+              "_mctax": {
+                "description": "Discount/Tax amount.",
+                "$ref": "#/components/schemas/MultiCurrency"
+              },
+              "_mcfee": {
+                "description": "Penalty/Fee amount.",
+                "$ref": "#/components/schemas/MultiCurrency"
+              },
+              "_mcvalpaid": {
+                "description": "Paid amount.",
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "_id": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Accounting Transaction Identifier"
+          },
+          "balanceItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_idaccounting": {
+                  "$ref": "#/components/schemas/UniqID",
+                  "description": "Accounting identifier"
+                },
+                "_mcval": {
+                  "$ref": "#/components/schemas/MultiCurrency",
+                  "description": "Value of the balance item"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "Type of the balance item",
+                  "enum": [
+                    "credit",
+                    "debit"
+                  ]
+                }
+              }
+            },
+            "description": "List of balance items associated with the transaction"
+          }
+        }
+      },
+      "AccountingTransactionPATCHRequestBody": {
+        "description": "Details of an accounting transaction PATCH request body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AccountingTransactionBaseRequest"
+          }
+        ]
+      },
+      "AccountingTransactionPOSTRequest": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of transaction",
+            "enum": [
+              "credit",
+              "debit"
+            ]
+          }
+        }
+      },
+      "AccountingTransactionPOSTRequestBody": {
+        "description": "Details of an accounting transaction POST request body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AccountingTransactionBaseRequest"
+          },
+          {
+            "$ref": "#/components/schemas/AccountingTransactionPOSTRequest"
+          }
+        ]
+      },
+      "CurrencyCode": {
+        "type": "string",
+        "description": "ISO codes for currencies that available for system",
+        "enum": [
+          "BRL",
+          "USD",
+          "EUR",
+          "MXN",
+          "ARS",
+          "UYU",
+          "PYG",
+          "CLP",
+          "COP",
+          "ZAR",
+          "XAF",
+          "BWP",
+          "MZN",
+          "NAD",
+          "SZL",
+          "LSL",
+          "AED",
+          "PEN",
+          "GBP",
+          "AUD",
+          "RUB",
+          "THB",
+          "DOP",
+          "CRC",
+          "SEK",
+          "IDR",
+          "CAD",
+          "NOK",
+          "GTQ",
+          "CHF"
+        ]
+      },
+      "DateString": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+        "example": "2020-02-29"
+      },
+      "DualID": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          {
+            "$ref": "#/components/schemas/InternalID"
+          }
+        ],
+        "description": "Dual unique identifier, accepts long and short identifiers transparently"
+      },
+      "ErrorBase": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "text of error"
+          }
+        }
+      },
+      "InternalID": {
+        "type": "string",
+        "pattern": "^([A-Z]{2}[0-9]{2,4}[A-Z]{1})$",
+        "description": "Short identifier that uniq for certain entity",
+        "example": "XQ02F"
+      },
+      "MultiCurrency": {
+        "type": "object",
+        "properties": {
+          "BRL": {
+            "type": "number"
+          },
+          "USD": {
+            "type": "number"
+          },
+          "EUR": {
+            "type": "number"
+          },
+          "MXN": {
+            "type": "number"
+          },
+          "ARS": {
+            "type": "number"
+          },
+          "UYU": {
+            "type": "number"
+          },
+          "PYG": {
+            "type": "number"
+          },
+          "CLP": {
+            "type": "number"
+          },
+          "COP": {
+            "type": "number"
+          },
+          "ZAR": {
+            "type": "number"
+          },
+          "XAF": {
+            "type": "number"
+          },
+          "BWP": {
+            "type": "number"
+          },
+          "MZN": {
+            "type": "number"
+          },
+          "NAD": {
+            "type": "number"
+          },
+          "SZL": {
+            "type": "number"
+          },
+          "LSL": {
+            "type": "number"
+          },
+          "AED": {
+            "type": "number"
+          },
+          "PEN": {
+            "type": "number"
+          },
+          "GBP": {
+            "type": "number"
+          },
+          "AUD": {
+            "type": "number"
+          },
+          "RUB": {
+            "type": "number"
+          },
+          "THB": {
+            "type": "number"
+          },
+          "DOP": {
+            "type": "number"
+          },
+          "CRC": {
+            "type": "number"
+          },
+          "SEK": {
+            "type": "number"
+          },
+          "IDR": {
+            "type": "number"
+          },
+          "CAD": {
+            "type": "number"
+          },
+          "NOK": {
+            "type": "number"
+          },
+          "GTQ": {
+            "type": "number"
+          },
+          "CHF": {
+            "type": "number"
+          }
+        },
+        "minProperties": 1,
+        "description": "Used for describing prices in different currencies."
+      },
+      "MultiLang": {
+        "type": "object",
+        "properties": {
+          "en_US": {
+            "type": "string"
+          },
+          "pt_BR": {
+            "type": "string"
+          },
+          "de_DE": {
+            "type": "string"
+          },
+          "es_ES": {
+            "type": "string"
+          },
+          "pt_PT": {
+            "type": "string"
+          },
+          "ru_RU": {
+            "type": "string"
+          },
+          "sv_SE": {
+            "type": "string"
+          },
+          "it_IT": {
+            "type": "string"
+          },
+          "fr_FR": {
+            "type": "string"
+          },
+          "el_GR": {
+            "type": "string"
+          }
+        },
+        "minProperties": 1,
+        "description": "Used for describing multilanguage data. Keys of the object are ISO locale code"
+      },
+      "Owner": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "description": "Owner id",
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "name": {
+            "description": "Owner name/email",
+            "type": "string"
+          },
+          "debit": {
+            "description": "Sum of all debts",
+            "type": "object",
+            "properties": {
+              "_mcval": {
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "credit": {
+            "description": "Sum of all credits",
+            "type": "object",
+            "properties": {
+              "_mcval": {
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "dateRange": {
+            "description": "Start and end date for searching by owner",
+            "type": "object",
+            "properties": {
+              "from": {
+                "$ref": "#/components/schemas/DateString"
+              },
+              "to": {
+                "$ref": "#/components/schemas/DateString"
+              }
+            }
+          },
+          "listings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OwnerListing"
+            }
+          }
+        }
+      },
+      "OwnerListing": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Unique object identifier"
+          },
+          "id": {
+            "$ref": "#/components/schemas/InternalID",
+            "description": "Internal short identifier. Unique for each entity"
+          },
+          "internalName": {
+            "type": "string",
+            "description": "Internal Name. The name you can search for within the system.",
+            "example": "002"
+          },
+          "debit": {
+            "description": "Sum of all debts to be paid of listing",
+            "type": "object",
+            "properties": {
+              "_mcval": {
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "credit": {
+            "description": "Sum of all credit to be received of listing",
+            "type": "object",
+            "properties": {
+              "_mcval": {
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "balance": {
+            "description": "balance of listing",
+            "type": "object",
+            "properties": {
+              "_mcval": {
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "lifeDebit": {
+            "description": "Sum of all Lifetime debts of listing",
+            "type": "object",
+            "properties": {
+              "_mcval": {
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "lifeCredit": {
+            "description": "Sum of all Lifetime credits of listing",
+            "type": "object",
+            "properties": {
+              "_mcval": {
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "lifeBalance": {
+            "description": "Lifetime balance of listing",
+            "type": "object",
+            "properties": {
+              "_mcval": {
+                "$ref": "#/components/schemas/MultiCurrency"
+              }
+            }
+          },
+          "accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Accounting"
+            }
+          }
+        }
+      },
+      "OwnersList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Owner"
+        }
+      },
+      "PaymentProvider": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PaymentProviderUser"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentProviderBank"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentProviderGateway"
+          }
+        ]
+      },
+      "PaymentProviderBank": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "bank"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "internalName": {
+            "type": "string"
+          },
+          "_mcstartBalance": {
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "allowPayments": {
+            "type": "boolean"
+          },
+          "currencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrencyCode"
+            }
+          },
+          "_mstitle": {
+            "$ref": "#/components/schemas/MultiLang"
+          },
+          "_msdesc": {
+            "$ref": "#/components/schemas/MultiLang"
+          },
+          "bankDetails": {
+            "type": "string"
+          },
+          "_msconfirmText": {
+            "$ref": "#/components/schemas/MultiLang"
+          }
+        }
+      },
+      "PaymentProviderGateway": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "cielo",
+              "koin",
+              "mercadopago",
+              "pagarme",
+              "pagarmeV5",
+              "pagseguro",
+              "pagsegurov2",
+              "payu",
+              "paypal",
+              "simplebank",
+              "stripe"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "internalName": {
+            "type": "string"
+          },
+          "currencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrencyCode"
+            }
+          },
+          "_mstitle": {
+            "$ref": "#/components/schemas/MultiLang"
+          },
+          "_msdesc": {
+            "$ref": "#/components/schemas/MultiLang"
+          }
+        }
+      },
+      "PaymentProviderUser": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "user"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "_mcstartBalance": {
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "_iduser": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      },
+      "PaymentProvidersList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PaymentProvider"
+        }
+      },
+      "PositionItem": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "id": {
+            "type": "string",
+            "example": "01.01"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "credit",
+              "debit"
+            ]
+          },
+          "_msvalues": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage values for position item"
+          },
+          "category": {
+            "type": "object",
+            "properties": {
+              "_msvalues": {
+                "$ref": "#/components/schemas/MultiLang",
+                "description": "Multilanguage values for category"
+              }
+            }
+          }
+        }
+      },
+      "PositionsList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/PositionItem"
+        }
+      },
+      "UniqID": {
+        "type": "string",
+        "pattern": "^([a-f0-9]){24}$",
+        "description": "Hexadecimal unique identifier",
+        "example": "5dee464910450609ca7ea2d7"
+      }
+    }
+  }
+}

@@ -1,0 +1,611 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "External API for managing system",
+    "version": "1.0.0",
+    "title": "Stays API"
+  },
+  "servers": [
+    {
+      "url": "/external/v1",
+      "description": "Main (production) server."
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "paths": {
+    "/booking/promo-codes": {
+      "get": {
+        "summary": "Returns promo-codes list.",
+        "tags": [
+          "Promo codes"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "description": "Filtering by name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Filtering by promo code status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "inactive"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "used",
+            "description": "Filtering by promo code used state",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "Number of records to skip for pagination.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of records to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with promo codes list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Promocode"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new promo code",
+        "tags": [
+          "Promo codes"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Promocode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Promocode"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/promo-codes/{_id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "_id",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns promo code detailed info.",
+        "tags": [
+          "Promo codes"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with promo code info.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Promocode"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update promo code item",
+        "tags": [
+          "Promo codes"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Promocode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Promocode"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove the promo code.",
+        "tags": [
+          "Promo codes"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Promocode"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "DateString": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+        "example": "2020-02-29"
+      },
+      "ErrorBase": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "text of error"
+          }
+        }
+      },
+      "MultiCurrency": {
+        "type": "object",
+        "properties": {
+          "BRL": {
+            "type": "number"
+          },
+          "USD": {
+            "type": "number"
+          },
+          "EUR": {
+            "type": "number"
+          },
+          "MXN": {
+            "type": "number"
+          },
+          "ARS": {
+            "type": "number"
+          },
+          "UYU": {
+            "type": "number"
+          },
+          "PYG": {
+            "type": "number"
+          },
+          "CLP": {
+            "type": "number"
+          },
+          "COP": {
+            "type": "number"
+          },
+          "ZAR": {
+            "type": "number"
+          },
+          "XAF": {
+            "type": "number"
+          },
+          "BWP": {
+            "type": "number"
+          },
+          "MZN": {
+            "type": "number"
+          },
+          "NAD": {
+            "type": "number"
+          },
+          "SZL": {
+            "type": "number"
+          },
+          "LSL": {
+            "type": "number"
+          },
+          "AED": {
+            "type": "number"
+          },
+          "PEN": {
+            "type": "number"
+          },
+          "GBP": {
+            "type": "number"
+          },
+          "AUD": {
+            "type": "number"
+          },
+          "RUB": {
+            "type": "number"
+          },
+          "THB": {
+            "type": "number"
+          },
+          "DOP": {
+            "type": "number"
+          },
+          "CRC": {
+            "type": "number"
+          },
+          "SEK": {
+            "type": "number"
+          },
+          "IDR": {
+            "type": "number"
+          },
+          "CAD": {
+            "type": "number"
+          },
+          "NOK": {
+            "type": "number"
+          },
+          "GTQ": {
+            "type": "number"
+          },
+          "CHF": {
+            "type": "number"
+          }
+        },
+        "minProperties": 1,
+        "description": "Used for describing prices in different currencies."
+      },
+      "Promocode": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "fixed",
+              "percent"
+            ]
+          },
+          "_f_discount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99,
+            "description": "Percentage discount"
+          },
+          "_mcdiscount": {
+            "$ref": "#/components/schemas/MultiCurrency",
+            "description": "Fixed multicurrency discount"
+          },
+          "maxUsesCount": {
+            "type": "number",
+            "description": "How many times promo code can be used"
+          },
+          "maxUsesCountPerGuest": {
+            "type": "number",
+            "description": "How many times the same guest account can use promo code"
+          },
+          "usedCount": {
+            "type": "integer",
+            "description": "How many times promo code was applied"
+          },
+          "usedCountPerGuest": {
+            "type": "integer",
+            "description": "How many times promo code was applied per guest"
+          },
+          "useWithOtherPromotions": {
+            "type": "boolean",
+            "description": "Can promocode be applied if other promotions exists"
+          },
+          "periodRestrictions": {
+            "type": "object",
+            "properties": {
+              "enable": {
+                "type": "boolean",
+                "description": "Indicates if restriction is active"
+              },
+              "from": {
+                "$ref": "#/components/schemas/DateString",
+                "description": "Start date when promocode can be applied"
+              },
+              "to": {
+                "$ref": "#/components/schemas/DateString",
+                "description": "End date when promocode can be applied"
+              },
+              "invalidDaysOfWeek": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 7
+                },
+                "description": "Days of week, when promocode cannot be applied. Possible values are 1-7 (Mon-Sun)"
+              }
+            }
+          },
+          "calendarRestrictions": {
+            "type": "object",
+            "properties": {
+              "enable": {
+                "type": "boolean",
+                "description": "Indicates if restriction is active"
+              },
+              "validArrivalDates": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "Start arrival date when promocode can be applied"
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "End arrival date when promocode can be applied"
+                  }
+                }
+              },
+              "invalidArrivalDates": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "Start arrival date when promocode cannot be applied"
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "End arrival date when promocode cannot be applied"
+                  }
+                }
+              },
+              "validDepartureDates": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "Start departure date when promocode can be applied"
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "End departure date when promocode can be applied"
+                  }
+                }
+              },
+              "invalidDepartureDates": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "Start departure date when promocode cannot be applied"
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "End departure date when promocode cannot be applied"
+                  }
+                }
+              },
+              "minLengthOfStay": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 99,
+                "description": "Indicates minimum nights number of booking when promocode can be applied"
+              }
+            }
+          },
+          "productRestrictions": {
+            "type": "object",
+            "properties": {
+              "enable": {
+                "type": "boolean",
+                "description": "Indicates if restriction is active"
+              },
+              "bedrooms": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "description": "Setup bedrooms number for what promo code is applicable"
+              },
+              "groups": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UniqID"
+                }
+              },
+              "listingsLimit": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "no",
+                      "exclude",
+                      "include"
+                    ]
+                  },
+                  "apartments": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/UniqID"
+                    }
+                  },
+                  "buildings": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/UniqID"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "userRestrictions": {
+            "type": "object",
+            "properties": {
+              "enable": {
+                "type": "boolean",
+                "description": "Indicates if restriction is active"
+              },
+              "emails": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Setup emails list of guests for what promo code is applicable"
+              },
+              "clients": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UniqID"
+                }
+              },
+              "minReservationsCount": {
+                "type": "integer",
+                "description": "Setup min number of previous guest's reservations after promo code will be valid"
+              },
+              "minAmountSpentByGuest": {
+                "type": "integer",
+                "description": "Setup min amount of money that guest spent before to make promo code valid"
+              },
+              "maxGuestsCount": {
+                "type": "integer",
+                "description": "Setup max guests count for reservations"
+              }
+            }
+          },
+          "target": {
+            "type": "string",
+            "enum": [
+              "dailyPrice",
+              "total"
+            ]
+          }
+        }
+      },
+      "UniqID": {
+        "type": "string",
+        "pattern": "^([a-f0-9]){24}$",
+        "description": "Hexadecimal unique identifier",
+        "example": "5dee464910450609ca7ea2d7"
+      }
+    }
+  }
+}

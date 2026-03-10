@@ -1,0 +1,856 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "External API for managing system",
+    "version": "1.0.0",
+    "title": "Stays API"
+  },
+  "servers": [
+    {
+      "url": "/external/v1",
+      "description": "Main (production) server."
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "paths": {
+    "/settings/listing/{listingId}/sellprice": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "listingId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns listing sell price configuration",
+        "tags": [
+          "Listing settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON object of sell price configuration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_idlisting": {
+                      "$ref": "#/components/schemas/UniqID",
+                      "description": "Listing identifier"
+                    },
+                    "_idmasterListing": {
+                      "$ref": "#/components/schemas/UniqID",
+                      "description": "Points to master listing config. If exists, means all config data are from master"
+                    },
+                    "mainCurrency": {
+                      "$ref": "#/components/schemas/CurrencyCode",
+                      "description": "Listing main currency"
+                    },
+                    "region": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "$ref": "#/components/schemas/UniqID",
+                          "description": "Region identifier"
+                        },
+                        "_t_meta": {
+                          "type": "object",
+                          "properties": {
+                            "internalName": {
+                              "type": "string",
+                              "description": "Pricing region internal name"
+                            }
+                          },
+                          "description": "Region extra information"
+                        }
+                      },
+                      "description": "Describes pricing region, listing belongs"
+                    },
+                    "fees": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "$ref": "#/components/schemas/UniqID"
+                          },
+                          "_f_val": {
+                            "type": "number",
+                            "description": "Fee value"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "fixed",
+                              "percent"
+                            ],
+                            "description": "Fee type"
+                          },
+                          "chargeType": {
+                            "type": "string",
+                            "enum": [
+                              "perNight",
+                              "perReserve",
+                              "perPerson"
+                            ],
+                            "description": "Defines how fee will be charged"
+                          },
+                          "invoiceVisibility": {
+                            "type": "string",
+                            "enum": [
+                              "hidden",
+                              "basic",
+                              "extras"
+                            ],
+                            "description": "Defines how fee will be displayed in reservation invoice"
+                          },
+                          "internalName": {
+                            "type": "string",
+                            "description": "Fee internal name"
+                          },
+                          "_mstitle": {
+                            "$ref": "#/components/schemas/MultiLang",
+                            "description": "Fee multilang public name"
+                          }
+                        }
+                      }
+                    },
+                    "petFee": {
+                      "type": "object",
+                      "properties": {
+                        "_f_val": {
+                          "type": "number",
+                          "description": "Fee pet value"
+                        },
+                        "currency": {
+                          "$ref": "#/components/schemas/CurrencyCode"
+                        }
+                      }
+                    },
+                    "securityDeposit": {
+                      "type": "number",
+                      "description": "Security deposit"
+                    },
+                    "guestsIncluded": {
+                      "type": "number",
+                      "description": "Indicates number of guests without extra costs"
+                    },
+                    "extraGuests": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "fixed",
+                            "percent"
+                          ],
+                          "description": "Extra guests commission type"
+                        },
+                        "_f_val": {
+                          "type": "number",
+                          "description": "Extra guests commission value"
+                        },
+                        "_f_fallbackAbsVal": {
+                          "type": "number",
+                          "description": "Extra guests fallback commission value. Only can set in absolute."
+                        }
+                      },
+                      "description": "Contains rules for charging extra guests"
+                    },
+                    "dynamicPricingRules": {
+                      "type": "object",
+                      "properties": {
+                        "earlyBirdDiscount": {
+                          "type": "object",
+                          "properties": {
+                            "useGlobalSettings": {
+                              "type": "boolean",
+                              "description": "Indicates if global settings are used for early bird discount"
+                            },
+                            "enabled": {
+                              "type": "boolean",
+                              "description": "Indicates if early bird discount is enabled"
+                            },
+                            "list": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "Details of early bird discount rules",
+                                "properties": {
+                                  "_f_val": {
+                                    "type": "number",
+                                    "description": "Discount value"
+                                  },
+                                  "daysThreshold": {
+                                    "type": "integer",
+                                    "description": "Days before check-in when discount is applied"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "lastMinuteDiscount": {
+                          "type": "object",
+                          "properties": {
+                            "useGlobalSettings": {
+                              "type": "boolean",
+                              "description": "Indicates if global settings are used for last minute discount"
+                            },
+                            "enabled": {
+                              "type": "boolean",
+                              "description": "Indicates if last minute discount is enabled"
+                            },
+                            "list": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "description": "Details of last minute discount rules",
+                                "properties": {
+                                  "_f_val": {
+                                    "type": "number",
+                                    "description": "Discount value"
+                                  },
+                                  "daysThreshold": {
+                                    "type": "integer",
+                                    "description": "Number of days from the current present day before check-in when Airbnb last minute reservation discount is applied"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "description": "Dynamic pricing rules for the listing"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/listing/{listingId}/booking": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "listingId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns booking settings for listing",
+        "tags": [
+          "Listing settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON object of booking settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_idlisting": {
+                      "$ref": "#/components/schemas/UniqID",
+                      "description": "Listing identifier"
+                    },
+                    "_idmasterListing": {
+                      "$ref": "#/components/schemas/UniqID",
+                      "description": "Points to master listing config. If exists, means all config data are from master"
+                    },
+                    "policy": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "$ref": "#/components/schemas/UniqID",
+                          "description": "Policy identifier"
+                        },
+                        "_t_meta": {
+                          "type": "object",
+                          "properties": {
+                            "internalName": {
+                              "type": "string",
+                              "description": "Cancellation policy internal name"
+                            },
+                            "_mstitle": {
+                              "$ref": "#/components/schemas/MultiLang",
+                              "description": "Cancellation policy multilanguage public name"
+                            },
+                            "_msdesc": {
+                              "$ref": "#/components/schemas/MultiLang",
+                              "description": "Cancellation policy multilanguage public description"
+                            }
+                          },
+                          "description": "Extra info about cancellation policy"
+                        }
+                      },
+                      "description": "Cancellation policy"
+                    },
+                    "instantBooking": {
+                      "type": "boolean",
+                      "description": "Listing instant booking state"
+                    },
+                    "checkInTime": {
+                      "$ref": "#/components/schemas/TimeString",
+                      "description": "Listing default check-in time"
+                    },
+                    "checkInTimeEnd": {
+                      "$ref": "#/components/schemas/TimeString",
+                      "description": "Listing default check-in time end"
+                    },
+                    "checkOutTimeStart": {
+                      "$ref": "#/components/schemas/TimeString",
+                      "description": "Listing default check-out time start"
+                    },
+                    "checkOutTime": {
+                      "$ref": "#/components/schemas/TimeString",
+                      "description": "Listing default check-out time"
+                    },
+                    "maxBookingAvailability": {
+                      "type": "integer",
+                      "description": "Maximum booking window in days"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/listing/{listingId}/house-rules": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "listingId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns house rules for listing",
+        "tags": [
+          "Listing settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "returns listing house rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HouseRules"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update listing house rules",
+        "tags": [
+          "Listing settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HouseRules"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "listing house rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HouseRules"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/listing/{listingId}/owner-contract": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "listingId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns owner contract for listing",
+        "tags": [
+          "Listing settings"
+        ],
+        "responses": {
+          "200": {
+            "description": "returns owner contract rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingOwnerContract"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update listing owner contract",
+        "tags": [
+          "Listing settings"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListingOwnerContract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "listing owner contract",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingOwnerContract"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "CurrencyCode": {
+        "type": "string",
+        "description": "ISO codes for currencies that available for system",
+        "enum": [
+          "BRL",
+          "USD",
+          "EUR",
+          "MXN",
+          "ARS",
+          "UYU",
+          "PYG",
+          "CLP",
+          "COP",
+          "ZAR",
+          "XAF",
+          "BWP",
+          "MZN",
+          "NAD",
+          "SZL",
+          "LSL",
+          "AED",
+          "PEN",
+          "GBP",
+          "AUD",
+          "RUB",
+          "THB",
+          "DOP",
+          "CRC",
+          "SEK",
+          "IDR",
+          "CAD",
+          "NOK",
+          "GTQ",
+          "CHF"
+        ]
+      },
+      "DateString": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+        "example": "2020-02-29"
+      },
+      "DualID": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          {
+            "$ref": "#/components/schemas/InternalID"
+          }
+        ],
+        "description": "Dual unique identifier, accepts long and short identifiers transparently"
+      },
+      "Email": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+      },
+      "ErrorBase": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "text of error"
+          }
+        }
+      },
+      "HouseRules": {
+        "type": "object",
+        "properties": {
+          "smokingAllowed": {
+            "type": "boolean",
+            "description": "Listing allow smoking"
+          },
+          "eventsAllowed": {
+            "type": "boolean",
+            "description": "Listing allow events"
+          },
+          "petsAllowed": {
+            "type": "string",
+            "enum": [
+              "yes",
+              "no",
+              "onrequest"
+            ],
+            "description": "Listing allow pets"
+          },
+          "petsPriceType": {
+            "type": "string",
+            "enum": [
+              "free",
+              "chargesmayapply"
+            ],
+            "description": "Pets price if allowed or on request"
+          },
+          "quietHours": {
+            "type": "boolean",
+            "description": "Listing has quiet hours period"
+          },
+          "quietHoursDetails": {
+            "type": "object",
+            "required": [
+              "_i_from",
+              "_i_to"
+            ],
+            "properties": {
+              "_i_from": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 23,
+                "description": "Start quiet hour"
+              },
+              "_i_to": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 23,
+                "description": "End quiet hour"
+              }
+            },
+            "description": "Quiet hours time range"
+          },
+          "_mshouserules": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing house rules"
+          },
+          "kidsAllowed": {
+            "type": "boolean",
+            "description": "Listing allows kids to stay"
+          },
+          "_i_kids": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Possible number of kids"
+          },
+          "_mskids": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage kids description"
+          },
+          "babiesAllowed": {
+            "type": "boolean",
+            "description": "Listing allows babies to stay"
+          },
+          "_i_babies": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Possible number of babies"
+          },
+          "_msbabies": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage babies description"
+          },
+          "_i_babyCribs": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Possible number of babies cribs"
+          },
+          "_msnochildrenSuitable": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilingual description when children are not allowed"
+          }
+        }
+      },
+      "InternalID": {
+        "type": "string",
+        "pattern": "^([A-Z]{2}[0-9]{2,4}[A-Z]{1})$",
+        "description": "Short identifier that uniq for certain entity",
+        "example": "XQ02F"
+      },
+      "ListingOwnerContract": {
+        "type": "object",
+        "description": "Listing owner contract info",
+        "properties": {
+          "useParentListingSettings": {
+            "type": "boolean",
+            "description": "Indicates that listing is following parent listing contract"
+          },
+          "useParentListingOwnerAgent": {
+            "type": "boolean",
+            "description": "Indicates that listing is following parent listing owner and agent"
+          },
+          "owner": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Owner name"
+              }
+            }
+          },
+          "agent": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Agent name"
+              },
+              "email": {
+                "$ref": "#/components/schemas/Email"
+              }
+            }
+          },
+          "registeredDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Registered on date"
+          },
+          "isInSublease": {
+            "type": "boolean",
+            "description": "Indicates that listing is in sublease"
+          },
+          "isInExclusiveDistribution": {
+            "type": "boolean",
+            "description": "Indicates that the listing is exclusively distributed through our system only"
+          },
+          "duration": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "$ref": "#/components/schemas/DateString"
+              },
+              "to": {
+                "$ref": "#/components/schemas/DateString"
+              },
+              "blockCalendarAfterContractEnd": {
+                "type": "boolean",
+                "description": "Block calendar after contract expiration date"
+              }
+            }
+          },
+          "commission": {
+            "type": "object",
+            "properties": {
+              "useGlobalSettings": {
+                "type": "boolean",
+                "description": "Indicates if commission is using global settings"
+              },
+              "businessModel": {
+                "type": "string",
+                "enum": [
+                  "overprice",
+                  "fixed"
+                ],
+                "description": "Business model"
+              },
+              "_f_percent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 99.99,
+                "description": "Commission percent"
+              },
+              "calculationMethod": {
+                "type": "string",
+                "enum": [
+                  "totalHostingInvoice",
+                  "totalDailyRates",
+                  "totalInvoiceAmount"
+                ],
+                "description": "Commission calculation method"
+              },
+              "discountChannelCommissionsBeforeCalculation": {
+                "type": "boolean",
+                "description": "Discount channel commissions before calculation"
+              },
+              "allowForwardingDeletionAfterBalanceSheet": {
+                "type": "boolean",
+                "description": "Allow forwarding deletion after balance sheet"
+              },
+              "allowChannelCommissionInCalculation": {
+                "type": "boolean",
+                "description": "Allow channel commission in calculation"
+              }
+            }
+          }
+        }
+      },
+      "MultiLang": {
+        "type": "object",
+        "properties": {
+          "en_US": {
+            "type": "string"
+          },
+          "pt_BR": {
+            "type": "string"
+          },
+          "de_DE": {
+            "type": "string"
+          },
+          "es_ES": {
+            "type": "string"
+          },
+          "pt_PT": {
+            "type": "string"
+          },
+          "ru_RU": {
+            "type": "string"
+          },
+          "sv_SE": {
+            "type": "string"
+          },
+          "it_IT": {
+            "type": "string"
+          },
+          "fr_FR": {
+            "type": "string"
+          },
+          "el_GR": {
+            "type": "string"
+          }
+        },
+        "minProperties": 1,
+        "description": "Used for describing multilanguage data. Keys of the object are ISO locale code"
+      },
+      "TimeString": {
+        "type": "string",
+        "pattern": "^\\d{2}:\\d{2}$",
+        "example": "14:00"
+      },
+      "UniqID": {
+        "type": "string",
+        "pattern": "^([a-f0-9]){24}$",
+        "description": "Hexadecimal unique identifier",
+        "example": "5dee464910450609ca7ea2d7"
+      }
+    }
+  }
+}

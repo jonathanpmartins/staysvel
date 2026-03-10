@@ -1,0 +1,4742 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "description": "External API for managing system",
+    "version": "1.0.0",
+    "title": "Stays API"
+  },
+  "servers": [
+    {
+      "url": "/external/v1",
+      "description": "Main (production) server."
+    }
+  ],
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ],
+  "paths": {
+    "/booking/searchfilter": {
+      "get": {
+        "summary": "Returns applicable parameters for search listings",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON object where keys are filter categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Searchfilter"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/search-listings": {
+      "get": {
+        "deprecated": true,
+        "summary": "Returns free apartments list.",
+        "tags": [
+          "Booking"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "description": "Start date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "description": "End date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "guests",
+            "description": "Max count of guests.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 99
+            }
+          },
+          {
+            "in": "query",
+            "name": "rooms",
+            "description": "Rooms count. 0 - Studio, 1 - one room, 2 - two rooms.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 99
+            }
+          },
+          {
+            "in": "query",
+            "name": "cities",
+            "description": "Cities list as an array of city names.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "maxItems": 10,
+              "uniqueItems": true
+            },
+            "allowReserved": true
+          },
+          {
+            "in": "query",
+            "name": "regions",
+            "description": "Regions list as an array of region names.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "maxItems": 10,
+              "uniqueItems": true
+            },
+            "allowReserved": true
+          },
+          {
+            "in": "query",
+            "name": "countries",
+            "description": "Countries list as an array of region names.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "maxItems": 10,
+              "uniqueItems": true
+            },
+            "allowReserved": true
+          },
+          {
+            "in": "query",
+            "name": "states",
+            "description": "States list as an array of region names.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "maxItems": 10,
+              "uniqueItems": true
+            },
+            "allowReserved": true
+          },
+          {
+            "in": "query",
+            "name": "properties",
+            "description": "Properties IDs list as an array",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              "minItems": 1,
+              "maxItems": 50,
+              "uniqueItems": true
+            }
+          },
+          {
+            "in": "query",
+            "name": "amenities",
+            "description": "Listing or property amenities as an array of amenity IDs.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              "minItems": 1,
+              "maxItems": 99,
+              "uniqueItems": true
+            }
+          },
+          {
+            "in": "query",
+            "name": "inventory",
+            "description": "Rooms inventory as an array of inventory names.",
+            "style": "form",
+            "explode": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "maxItems": 99,
+              "uniqueItems": true
+            },
+            "allowReserved": true
+          },
+          {
+            "in": "query",
+            "name": "id",
+            "description": "Apartment internal code.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "description": "Sort by.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "rating",
+                "price"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "Number of records to skip for pagination.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of records to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            }
+          },
+          {
+            "in": "query",
+            "name": "isBookable",
+            "description": "Filter apartments by minimum stay requirements to return only bookable properties.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of listings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListingBaseWithPrice"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Returns free apartments list.",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "from",
+                  "to"
+                ],
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "Start date."
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "End date."
+                  },
+                  "guests": {
+                    "type": "integer",
+                    "description": "Max count of guests.",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "rooms": {
+                    "type": "array",
+                    "description": "Rooms count. 0 - Studio, 1 - one room, 2 - two rooms.",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 99
+                    }
+                  },
+                  "cities": {
+                    "type": "array",
+                    "description": "Cities list as an array of city names.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "uniqueItems": true
+                  },
+                  "regions": {
+                    "type": "array",
+                    "description": "Regions list as an array of region names.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "uniqueItems": true
+                  },
+                  "countries": {
+                    "type": "array",
+                    "description": "Countries list as an array of country codes.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "uniqueItems": true
+                  },
+                  "states": {
+                    "type": "array",
+                    "description": "States list as an array of state names.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "uniqueItems": true
+                  },
+                  "properties": {
+                    "type": "array",
+                    "description": "Properties IDs list as an array",
+                    "items": {
+                      "$ref": "#/components/schemas/DualID"
+                    },
+                    "minItems": 1,
+                    "maxItems": 50,
+                    "uniqueItems": true
+                  },
+                  "amenities": {
+                    "type": "array",
+                    "description": "Listing or property amenities as an array of amenity IDs.",
+                    "items": {
+                      "$ref": "#/components/schemas/UniqID"
+                    },
+                    "minItems": 1,
+                    "maxItems": 99,
+                    "uniqueItems": true
+                  },
+                  "inventory": {
+                    "type": "array",
+                    "description": "Rooms inventory as an array of inventory names.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 99,
+                    "uniqueItems": true
+                  },
+                  "listingId": {
+                    "$ref": "#/components/schemas/DualID",
+                    "description": "Listing identifier"
+                  },
+                  "isBookable": {
+                    "type": "boolean",
+                    "description": "Filter apartments by minimum stay requirements to return only bookable properties."
+                  },
+                  "sort": {
+                    "type": "string",
+                    "description": "Sort by.",
+                    "enum": [
+                      "rating",
+                      "price"
+                    ]
+                  },
+                  "skip": {
+                    "type": "integer",
+                    "description": "Number of records to skip for pagination.",
+                    "minimum": 0
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "description": "Maximum number of records to return.",
+                    "minimum": 1,
+                    "maximum": 100
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Array of listings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListingBaseWithPrice"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/calculate-price": {
+      "get": {
+        "deprecated": true,
+        "summary": "Returns detailed price for listing for certain dates",
+        "tags": [
+          "Booking"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "listingId",
+            "required": true,
+            "description": "Listing identifier",
+            "schema": {
+              "$ref": "#/components/schemas/DualID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "description": "Start date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "description": "End date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "guests",
+            "description": "Max count of guests.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 99
+            }
+          },
+          {
+            "in": "query",
+            "name": "promocode",
+            "description": "Promo code identifier",
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/UniqID"
+                },
+                {
+                  "type": "string",
+                  "description": "Promo code name"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with detailed price calculation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingBookingPrice"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Returns detailed price for listings for certain dates",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "from",
+                  "to",
+                  "listingIds"
+                ],
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "Start date."
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "End date."
+                  },
+                  "listingIds": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/DualID"
+                    },
+                    "description": "Listings identifiers"
+                  },
+                  "guests": {
+                    "type": "integer",
+                    "description": "Max count of guests.",
+                    "minimum": 1,
+                    "maximum": 99
+                  },
+                  "promocode": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/UniqID"
+                      },
+                      {
+                        "type": "string",
+                        "description": "Promo code name"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON object with detailed price calculation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListingBookingPrice"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/reservations": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "description": "Start date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "description": "End date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "dateType",
+            "required": true,
+            "description": "Criteria for applying dates range",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "arrival",
+                "departure",
+                "creation",
+                "creationorig",
+                "included"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "listingId",
+            "description": "Listing identifier",
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/DualID"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DualID"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "description": "Reservation type",
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ReservationType"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservationType"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "_idclient",
+            "description": "Client identifier",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "schema": {
+              "type": "integer",
+              "description": "Number of records to skip for pagination.",
+              "minimum": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "description": "Maximum number of records to return.",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "summary": "Returns listing reservations.",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with listing reservations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservationBase"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new listing reservation.",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ReservationBlockingBodyNew"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ReservationBodyNew"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "blocked": "#/components/schemas/ReservationBlockingBodyNew",
+                    "maintenance": "#/components/schemas/ReservationBlockingBodyNew",
+                    "reserved": "#/components/schemas/ReservationBodyNew",
+                    "booked": "#/components/schemas/ReservationBodyNew"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reserve created successfully!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/reservation-requests": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "description": "Start date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "description": "End date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "dateType",
+            "required": true,
+            "description": "Criteria for applying dates range",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "arrival",
+                "departure",
+                "creation"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "listingId",
+            "description": "Listing identifier",
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/DualID"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DualID"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "schema": {
+              "type": "integer",
+              "description": "Number of records to skip for pagination.",
+              "minimum": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "description": "Maximum number of records to return.",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "summary": "Returns list of reservation requests",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reservation requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservationRequestBodyResponse"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new reservation request",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservationRequestBodyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationRequestBodyResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/reservation-requests/{reserveRequestId}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reserveRequestId",
+            "description": "UniqID",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        ],
+        "summary": "Returns a specific reservation request",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with reservation request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationRequestBodyResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reserveRequestId",
+            "description": "UniqID",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        ],
+        "summary": "Deletes a specific requested reservations.",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted reservation request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationRequestBodyResponse"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/reservations-export": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "description": "Start date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "description": "End date.",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "dateType",
+            "required": true,
+            "description": "Criteria for applying dates range",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "arrival",
+                "departure",
+                "creation",
+                "creationorig",
+                "included"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "listingId",
+            "description": "Listing identifier",
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/DualID"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DualID"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "description": "Reservation type",
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ReservationType"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservationType"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "_idclient",
+            "description": "Client identifier",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        ],
+        "summary": "Returns report in xlsx format",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "XLSX file with report result",
+            "content": {
+              "application/vnd.openxmlformats": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Returns reservations list",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "from",
+                  "to",
+                  "dateType"
+                ],
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "Start date."
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/DateString",
+                    "description": "End date."
+                  },
+                  "dateType": {
+                    "description": "Criteria for applying dates range",
+                    "type": "string",
+                    "enum": [
+                      "arrival",
+                      "departure",
+                      "creation",
+                      "creationorig",
+                      "included"
+                    ]
+                  },
+                  "listingId": {
+                    "description": "Listing identifier",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/DualID"
+                    },
+                    "minItems": 1,
+                    "maxItems": 50,
+                    "uniqueItems": true
+                  },
+                  "_idclient": {
+                    "$ref": "#/components/schemas/UniqID",
+                    "description": "Client identifier"
+                  },
+                  "partnerCode": {
+                    "type": "string",
+                    "description": "Partner code"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Array of reservations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReservationExport"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/reservations/{reserveId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "reserveId",
+          "description": "UniqID, InternalID or partnerCode",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              {
+                "$ref": "#/components/schemas/InternalID"
+              },
+              {
+                "$ref": "#/components/schemas/partnerCode"
+              }
+            ],
+            "description": "Universal unique identifier, accepts long and short identifiers transparently"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns reservation detailed info.",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with reservation info.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update reservation item",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ReservationBlockingBody"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ReservationBodyModify"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ReservationBodyCancel"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "blocked": "#/components/schemas/ReservationBlockingBody",
+                    "maintenance": "#/components/schemas/ReservationBlockingBody",
+                    "reserved": "#/components/schemas/ReservationBodyModify",
+                    "booked": "#/components/schemas/ReservationBodyModify",
+                    "contract": "#/components/schemas/ReservationBodyModify",
+                    "canceled": "#/components/schemas/ReservationBodyCancel"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationBase"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete reservation item",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationBase"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/reservations/{reserveId}/payments": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "reserveId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns reservation payments.",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with reservation payments.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationPayments"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add reservation payment.",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservationPayment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "JSON object with reservation payment info.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationPayment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/reservations/{reserveId}/payments/{paymentId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "reserveId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/DualID"
+          }
+        },
+        {
+          "in": "path",
+          "name": "paymentId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns reservation payment.",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with reservation payment.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationPayment"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update reservation payment",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_f_val": {
+                    "type": "number"
+                  },
+                  "expirationDate": {
+                    "$ref": "#/components/schemas/DateString"
+                  },
+                  "paymentDate": {
+                    "$ref": "#/components/schemas/DateString"
+                  },
+                  "competenceDate": {
+                    "$ref": "#/components/schemas/DateString"
+                  },
+                  "desc": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "_f_fee": {
+                    "type": "number"
+                  },
+                  "_f_tax": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationPayment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete reservation payment",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationPayment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/reservations/{reserveId}/extra-services": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "reserveId",
+          "description": "UniqID, InternalID or partnerCode",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              {
+                "$ref": "#/components/schemas/InternalID"
+              },
+              {
+                "$ref": "#/components/schemas/partnerCode"
+              }
+            ],
+            "description": "Universal unique identifier, accepts long and short identifiers transparently"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns reservation extra services list",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with reservation info.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationExtraServicesList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add extra service",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "_idextra",
+                  "_i_unitCount",
+                  "startDate",
+                  "desc"
+                ],
+                "$ref": "#/components/schemas/ReservationExtraService"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationExtraService"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/reservations/{reserveId}/extra-services/{extraServiceId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "reserveId",
+          "description": "UniqID, InternalID or partnerCode",
+          "required": true,
+          "schema": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              {
+                "$ref": "#/components/schemas/InternalID"
+              },
+              {
+                "$ref": "#/components/schemas/partnerCode"
+              }
+            ],
+            "description": "Universal unique identifier, accepts long and short identifiers transparently"
+          }
+        },
+        {
+          "in": "path",
+          "name": "extraServiceId",
+          "description": "Extra service identifier inside reservation",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns reservation extra-service item",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationExtraService"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update reservation extra-service item",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "_id",
+                  "_idextra",
+                  "_i_unitCount",
+                  "startDate",
+                  "desc"
+                ],
+                "$ref": "#/components/schemas/ReservationExtraService"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationExtraService"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete reservation payment.",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservationBase"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameter in request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/extra-services": {
+      "get": {
+        "summary": "Returns extra services",
+        "tags": [
+          "Booking"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "itemId",
+            "description": "Extra service translation name identifier",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          },
+          {
+            "in": "query",
+            "name": "categoryId",
+            "description": "Extra service translation category identifier",
+            "schema": {
+              "$ref": "#/components/schemas/UniqID"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON array of extra services",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtraServicesList"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/extra-services/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns extra service",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "A JSON object of extra services=",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtraService"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/clients": {
+      "get": {
+        "summary": "Returns client list.",
+        "tags": [
+          "Booking"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "description": "Filtering by name.",
+            "schema": {
+              "type": "string",
+              "pattern": "^([a-zA-Z0-9-/. ]){3,}$",
+              "minLength": 3
+            }
+          },
+          {
+            "in": "query",
+            "name": "email",
+            "description": "Filtering by email.",
+            "schema": {
+              "$ref": "#/components/schemas/Email"
+            }
+          },
+          {
+            "in": "query",
+            "name": "phone",
+            "description": "Filtering by phone.",
+            "schema": {
+              "$ref": "#/components/schemas/Phonenumber"
+            }
+          },
+          {
+            "in": "query",
+            "name": "hasReservations",
+            "description": "Allows to filter clients who has or doesn't have reservations",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "reservationFilter",
+            "description": "Set criteria to search clients by reservations for certain period",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "creation",
+                "creationorig",
+                "arrival",
+                "departure"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "reservationFrom",
+            "description": "Start date for searching by reservations",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "reservationTo",
+            "description": "End date for searching by reservations",
+            "schema": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "description": "Sort type.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "sortBy",
+            "description": "Sort by.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "name",
+                "email"
+              ]
+            }
+          },
+          {
+            "in": "query",
+            "name": "skip",
+            "description": "Number of records to skip for pagination.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Maximum number of records to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with guests list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClientBase"
+                  }
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create new client item",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ClientBaseEditable"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ClientDetailedEditable"
+                  },
+                  {
+                    "$ref": "#/components/schemas/UserResponsibility"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientDetailed"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking/clients/{clientId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "clientId",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/UniqID"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns client detailed info.",
+        "tags": [
+          "Booking"
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON object with client info.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientDetailed"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item doesn't exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update client item",
+        "tags": [
+          "Booking"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ClientBaseEditable"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ClientDetailedEditable"
+                  },
+                  {
+                    "$ref": "#/components/schemas/UserResponsibility"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientDetailed"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "HTTP Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBase"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "additional": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "streetNumber": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "stateCode": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          }
+        }
+      },
+      "Agent": {
+        "type": "object",
+        "description": "Provides information about who is responsible for the reservation",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "AppCustomFieldForTarget": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_idfield": {
+              "$ref": "#/components/schemas/UniqID"
+            },
+            "val": {}
+          }
+        }
+      },
+      "ClientBase": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Unique object identifier"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ClientBaseEditable"
+          },
+          {
+            "$ref": "#/components/schemas/UserResponsibility"
+          }
+        ]
+      },
+      "ClientBaseEditable": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "person",
+              "company"
+            ],
+            "description": "Defines if this client is personal or company"
+          },
+          "fName": {
+            "type": "string",
+            "description": "First name. Applicable for personal account"
+          },
+          "lName": {
+            "type": "string",
+            "description": "Last name. Applicable for personal account"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of client. Applicable for company"
+          },
+          "email": {
+            "$ref": "#/components/schemas/Email"
+          },
+          "contactEmails": {
+            "$ref": "#/components/schemas/ClientEmails"
+          },
+          "isUser": {
+            "type": "boolean",
+            "description": "Indicates if client has access to personal area on site"
+          },
+          "_iduser": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Unique identifier of user"
+          },
+          "creationDate": {
+            "$ref": "#/components/schemas/DateString",
+            "readOnly": true
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "description": "Birth date"
+          },
+          "gender": {
+            "type": "string",
+            "description": "Gender",
+            "enum": [
+              "",
+              "m",
+              "f"
+            ]
+          },
+          "civilState": {
+            "type": "string",
+            "description": "Civil State",
+            "enum": [
+              "",
+              "single",
+              "married",
+              "devorced",
+              "widowed"
+            ]
+          },
+          "nationality": {
+            "type": "string",
+            "description": "Nationality"
+          },
+          "internalNote": {
+            "type": "string",
+            "description": "Internal note"
+          },
+          "clientSource": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Client Source"
+          }
+        }
+      },
+      "ClientDetailed": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ClientBase"
+          },
+          {
+            "$ref": "#/components/schemas/ClientDetailedEditable"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "lastAccess": {
+                "type": "object",
+                "properties": {
+                  "_dt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Date time info for last access"
+                  },
+                  "ip": {
+                    "type": "string",
+                    "description": "IP address"
+                  },
+                  "ua": {
+                    "type": "string",
+                    "description": "User agent"
+                  },
+                  "device": {
+                    "type": "string",
+                    "description": "User device"
+                  }
+                },
+                "description": "Provides information about last access into system. Applicable only for clients who has access to personal area"
+              },
+              "reservations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ReservationBase"
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "_iduser": {
+                "$ref": "#/components/schemas/UniqID"
+              }
+            }
+          }
+        ]
+      },
+      "ClientDetailedEditable": {
+        "type": "object",
+        "properties": {
+          "phones": {
+            "$ref": "#/components/schemas/ClientPhones"
+          },
+          "documents": {
+            "$ref": "#/components/schemas/ClientDocuments"
+          },
+          "prefLang": {
+            "$ref": "#/components/schemas/LangCode",
+            "description": "Preferred speaking language"
+          },
+          "alternateLangs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LangCode"
+            }
+          },
+          "internalNote": {
+            "type": "string",
+            "description": "Some internal information about this client"
+          }
+        }
+      },
+      "ClientDocuments": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "cpf",
+                "cnpj",
+                "id",
+                "passport",
+                "rne"
+              ],
+              "description": "Document type"
+            },
+            "numb": {
+              "type": "string",
+              "description": "Document number"
+            },
+            "issued": {
+              "type": "string",
+              "description": "Name of organization what issued document"
+            },
+            "date": {
+              "$ref": "#/components/schemas/DateString"
+            }
+          }
+        }
+      },
+      "ClientEmails": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "adr": {
+              "$ref": "#/components/schemas/Email",
+              "description": "email address"
+            },
+            "type": {
+              "type": "string",
+              "description": "email type"
+            },
+            "hint": {
+              "type": "string",
+              "description": "email hint"
+            }
+          }
+        }
+      },
+      "ClientPhones": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "iso": {
+              "$ref": "#/components/schemas/Phonenumber"
+            },
+            "rawNum": {
+              "type": "string",
+              "description": "Raw phone number. This field is returned when system couldn't validate a phone number provided by client"
+            },
+            "hint": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CurrencyCode": {
+        "type": "string",
+        "description": "ISO codes for currencies that available for system",
+        "enum": [
+          "BRL",
+          "USD",
+          "EUR",
+          "MXN",
+          "ARS",
+          "UYU",
+          "PYG",
+          "CLP",
+          "COP",
+          "ZAR",
+          "XAF",
+          "BWP",
+          "MZN",
+          "NAD",
+          "SZL",
+          "LSL",
+          "AED",
+          "PEN",
+          "GBP",
+          "AUD",
+          "RUB",
+          "THB",
+          "DOP",
+          "CRC",
+          "SEK",
+          "IDR",
+          "CAD",
+          "NOK",
+          "GTQ",
+          "CHF"
+        ]
+      },
+      "DateString": {
+        "type": "string",
+        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+        "example": "2020-02-29"
+      },
+      "DateTimeString": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "DualID": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          {
+            "$ref": "#/components/schemas/InternalID"
+          }
+        ],
+        "description": "Dual unique identifier, accepts long and short identifiers transparently"
+      },
+      "Email": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+      },
+      "ErrorBase": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "text of error"
+          }
+        }
+      },
+      "ExtraService": {
+        "type": "object",
+        "description": "Extra service template object",
+        "properties": {
+          "_id": {
+            "description": "Extra service identifier",
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_msname": {
+            "description": "Extra services mulilanguage name",
+            "$ref": "#/components/schemas/MultiLang"
+          },
+          "_msprice": {
+            "description": "Extra services amount price",
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "itemId": {
+            "description": "Extra service translation name identifier",
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "categoryId": {
+            "description": "Extra service translation category identifier",
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "dateTimeRangeSettings": {
+            "type": "object",
+            "description": "Date Time Range Format",
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "Date with single or range format",
+                "enum": [
+                  "single",
+                  "range"
+                ]
+              },
+              "time": {
+                "type": "string",
+                "description": "Time with single, range, dailyCharge or single and dailyCharge format",
+                "enum": [
+                  "single",
+                  "range"
+                ]
+              },
+              "chargeType ": {
+                "type": "string",
+                "description": "Time with single, range, dailyCharge or single and dailyCharge format",
+                "enum": [
+                  "perDay",
+                  "perReserve"
+                ]
+              }
+            }
+          },
+          "lodgingCheck": {
+            "type": "boolean",
+            "description": "Indicates if should be verified during check-in/out"
+          }
+        }
+      },
+      "ExtraServicesList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ExtraService"
+        }
+      },
+      "InternalID": {
+        "type": "string",
+        "pattern": "^([A-Z]{2}[0-9]{2,4}[A-Z]{1})$",
+        "description": "Short identifier that uniq for certain entity",
+        "example": "XQ02F"
+      },
+      "LangCode": {
+        "type": "string",
+        "enum": [
+          "en_US",
+          "pt_BR",
+          "de_DE",
+          "es_ES",
+          "ru_RU",
+          "sv_SE",
+          "it_IT",
+          "fr_FR",
+          "pt_PT",
+          "el_GR"
+        ],
+        "description": "Language code in iso format"
+      },
+      "LatLng": {
+        "type": "object",
+        "required": [
+          "_f_lat",
+          "_f_lng"
+        ],
+        "properties": {
+          "_f_lat": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "_f_lng": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          }
+        }
+      },
+      "ListingBase": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Unique object identifier"
+              },
+              "id": {
+                "$ref": "#/components/schemas/InternalID",
+                "description": "Internal short identifier. Unique for each entity"
+              },
+              "_idproperty": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Unique property identifier"
+              },
+              "_idpropertyType": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Property type identifier for single-unit listing"
+              },
+              "_t_propertyTypeMeta": {
+                "type": "object",
+                "properties": {
+                  "_mstitle": {
+                    "$ref": "#/components/schemas/MultiLang"
+                  }
+                },
+                "description": "Meta object that contains extra info about property type"
+              },
+              "_idtype": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Listing type identifier"
+              },
+              "_t_typeMeta": {
+                "type": "object",
+                "properties": {
+                  "_mstitle": {
+                    "$ref": "#/components/schemas/MultiLang"
+                  }
+                },
+                "description": "Meta object that contains extra info about listing type"
+              },
+              "subtype": {
+                "$ref": "#/components/schemas/ListingSubtype"
+              },
+              "status": {
+                "$ref": "#/components/schemas/ListingStatus"
+              },
+              "internalName": {
+                "type": "string",
+                "description": "Internal Name. The name you can search for within the system.",
+                "example": "002"
+              },
+              "_mstitle": {
+                "$ref": "#/components/schemas/MultiLang",
+                "description": "Multilanguage listing title"
+              },
+              "_msdesc": {
+                "$ref": "#/components/schemas/MultiLang",
+                "description": "Multilanguage listing description"
+              },
+              "_i_maxGuests": {
+                "type": "integer",
+                "description": "Listing capacity"
+              },
+              "_i_rooms": {
+                "type": "integer",
+                "description": "Listing rooms number"
+              },
+              "_i_beds": {
+                "type": "integer",
+                "description": "Listing beds number"
+              },
+              "_f_bathrooms": {
+                "type": "number",
+                "description": "Listing bathrooms number"
+              },
+              "address": {
+                "$ref": "#/components/schemas/Address",
+                "description": "Address object"
+              },
+              "latLng": {
+                "$ref": "#/components/schemas/LatLng",
+                "description": "GEO coordinates"
+              },
+              "_f_square": {
+                "type": "number",
+                "description": "Listing square"
+              },
+              "instantBooking": {
+                "type": "boolean",
+                "description": "Listing instant booking state"
+              },
+              "_idPriceGroupMaster": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Master listing identifier. If exists, means that this listing is in Vertical Price Group"
+              },
+              "_idCloneGroupMaster": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Master listing identifier. If exists, means that this listing is in Clone Group"
+              },
+              "_idPriceMaster": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Master listing identifier. If exists, means that this listing is in Horizontal Price Group (only inhertis prices from another listing)"
+              },
+              "_idold": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Old unique object identifier"
+              },
+              "listingCategories": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "vacationRental",
+                    "longTermRental",
+                    "forSale"
+                  ]
+                },
+                "description": "List of listing categories/types that define the property's usage and marketing purpose"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ListingBaseEditable"
+          }
+        ]
+      },
+      "ListingBaseEditable": {
+        "type": "object",
+        "properties": {
+          "_idproperty": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Unique property identifier"
+          },
+          "_idtype": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Listing type identifier"
+          },
+          "subtype": {
+            "$ref": "#/components/schemas/ListingSubtype"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ListingStatus"
+          },
+          "internalName": {
+            "type": "string",
+            "description": "Internal Name. The name you can search for within the system.",
+            "example": "002"
+          },
+          "_mstitle": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing title"
+          },
+          "internalNote": {
+            "type": "string",
+            "description": "Internal Note. The note is internal to the system and is not visible to the customer.",
+            "example": "Internal Note"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address",
+            "description": "Address object"
+          },
+          "latLng": {
+            "$ref": "#/components/schemas/LatLng",
+            "description": "GEO coordinates"
+          },
+          "_f_square": {
+            "type": "number",
+            "description": "Listing square"
+          }
+        }
+      },
+      "ListingBaseWithPrice": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListingBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "bookingPrice": {
+                "$ref": "#/components/schemas/ListingBookingPrice"
+              }
+            }
+          }
+        ]
+      },
+      "ListingBookingPrice": {
+        "type": "object",
+        "properties": {
+          "_idlisting": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "from": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "to": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "guests": {
+            "type": "number",
+            "minimum": 1
+          },
+          "_mctotal": {
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "feesIncluded": {
+            "type": "boolean",
+            "description": "Indicates that fees already included in final price"
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "$ref": "#/components/schemas/UniqID"
+                },
+                "internalName": {
+                  "type": "string",
+                  "description": "Internal fee name"
+                },
+                "_mstitle": {
+                  "$ref": "#/components/schemas/MultiLang"
+                },
+                "_mcval": {
+                  "$ref": "#/components/schemas/MultiCurrency"
+                }
+              }
+            }
+          },
+          "mainCurrency": {
+            "$ref": "#/components/schemas/CurrencyCode",
+            "description": "Listing main currency"
+          }
+        }
+      },
+      "ListingStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "hidden",
+          "inactive",
+          "draft"
+        ]
+      },
+      "ListingSubtype": {
+        "type": "string",
+        "enum": [
+          "private_room",
+          "entire_home",
+          "shared_room"
+        ],
+        "description": "Sub-type of this single unit."
+      },
+      "MultiCurrency": {
+        "type": "object",
+        "properties": {
+          "BRL": {
+            "type": "number"
+          },
+          "USD": {
+            "type": "number"
+          },
+          "EUR": {
+            "type": "number"
+          },
+          "MXN": {
+            "type": "number"
+          },
+          "ARS": {
+            "type": "number"
+          },
+          "UYU": {
+            "type": "number"
+          },
+          "PYG": {
+            "type": "number"
+          },
+          "CLP": {
+            "type": "number"
+          },
+          "COP": {
+            "type": "number"
+          },
+          "ZAR": {
+            "type": "number"
+          },
+          "XAF": {
+            "type": "number"
+          },
+          "BWP": {
+            "type": "number"
+          },
+          "MZN": {
+            "type": "number"
+          },
+          "NAD": {
+            "type": "number"
+          },
+          "SZL": {
+            "type": "number"
+          },
+          "LSL": {
+            "type": "number"
+          },
+          "AED": {
+            "type": "number"
+          },
+          "PEN": {
+            "type": "number"
+          },
+          "GBP": {
+            "type": "number"
+          },
+          "AUD": {
+            "type": "number"
+          },
+          "RUB": {
+            "type": "number"
+          },
+          "THB": {
+            "type": "number"
+          },
+          "DOP": {
+            "type": "number"
+          },
+          "CRC": {
+            "type": "number"
+          },
+          "SEK": {
+            "type": "number"
+          },
+          "IDR": {
+            "type": "number"
+          },
+          "CAD": {
+            "type": "number"
+          },
+          "NOK": {
+            "type": "number"
+          },
+          "GTQ": {
+            "type": "number"
+          },
+          "CHF": {
+            "type": "number"
+          }
+        },
+        "minProperties": 1,
+        "description": "Used for describing prices in different currencies."
+      },
+      "MultiLang": {
+        "type": "object",
+        "properties": {
+          "en_US": {
+            "type": "string"
+          },
+          "pt_BR": {
+            "type": "string"
+          },
+          "de_DE": {
+            "type": "string"
+          },
+          "es_ES": {
+            "type": "string"
+          },
+          "pt_PT": {
+            "type": "string"
+          },
+          "ru_RU": {
+            "type": "string"
+          },
+          "sv_SE": {
+            "type": "string"
+          },
+          "it_IT": {
+            "type": "string"
+          },
+          "fr_FR": {
+            "type": "string"
+          },
+          "el_GR": {
+            "type": "string"
+          }
+        },
+        "minProperties": 1,
+        "description": "Used for describing multilanguage data. Keys of the object are ISO locale code"
+      },
+      "Operator": {
+        "type": "object",
+        "description": "Provides information about who's author of the reservation",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Phonenumber": {
+        "type": "string",
+        "pattern": "^\\+(\\d+){7,23}$",
+        "example": "+00000000000",
+        "minLength": 8,
+        "maxLength": 24
+      },
+      "PropertyBase": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID",
+                "description": "Unique object identifier"
+              },
+              "id": {
+                "$ref": "#/components/schemas/InternalID",
+                "description": "Internal short identifier. Unique for each entity"
+              },
+              "_t_typeMeta": {
+                "type": "object",
+                "properties": {
+                  "_mstitle": {
+                    "$ref": "#/components/schemas/MultiLang"
+                  }
+                },
+                "description": "Meta object that contains extra info about property type"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/PropertyBaseEditable"
+          }
+        ]
+      },
+      "PropertyBaseEditable": {
+        "type": "object",
+        "properties": {
+          "_idtype": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Property type identifier"
+          },
+          "status": {
+            "$ref": "#/components/schemas/PropertyStatus"
+          },
+          "internalName": {
+            "type": "string",
+            "description": "Internal Name. The name you can search for within the system.",
+            "example": "002"
+          },
+          "_mstitle": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage property title"
+          },
+          "_msdesc": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage property description"
+          },
+          "_msneighborhood_overview": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing information about the neighborhood and surrounding region. Suggestions about what guests should experience & do."
+          },
+          "_mstransit": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Multilanguage listing information on getting to the property. Is there convenient public transit? Is parking included with the listing or nearby? How does the guest get to the listing from the airport?"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address",
+            "description": "Address object"
+          },
+          "latLng": {
+            "$ref": "#/components/schemas/LatLng",
+            "description": "GEO coordinates"
+          }
+        }
+      },
+      "PropertyStatus": {
+        "type": "string",
+        "enum": [
+          "active",
+          "inactive",
+          "draft"
+        ]
+      },
+      "ReservationBase": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "id": {
+            "$ref": "#/components/schemas/InternalID"
+          },
+          "creationDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "creationTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "creationDateTime": {
+            "$ref": "#/components/schemas/DateTimeString",
+            "description": "Reservation creation date and time with timezone"
+          },
+          "checkInDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkInTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "checkOutDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkOutTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "_idlisting": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_idclient": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ReservationType"
+          },
+          "price": {
+            "type": "object",
+            "properties": {
+              "currency": {
+                "$ref": "#/components/schemas/CurrencyCode"
+              },
+              "_f_total": {
+                "type": "number"
+              },
+              "hostingDetails": {
+                "type": "object",
+                "properties": {
+                  "_f_nightPrice": {
+                    "type": "number",
+                    "description": "Total night price"
+                  },
+                  "fees": {
+                    "$ref": "#/components/schemas/ReservationFees"
+                  },
+                  "discounts": {
+                    "$ref": "#/components/schemas/ReservationDiscounts"
+                  }
+                }
+              },
+              "extrasDetails": {
+                "type": "object",
+                "properties": {
+                  "fees": {
+                    "$ref": "#/components/schemas/ReservationFees"
+                  },
+                  "extraServices": {
+                    "$ref": "#/components/schemas/ReservationExtraServicesList"
+                  },
+                  "discounts": {
+                    "$ref": "#/components/schemas/ReservationDiscounts"
+                  },
+                  "_f_total": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "partner": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              "name": {
+                "type": "string"
+              },
+              "commission": {
+                "$ref": "#/components/schemas/commission"
+              }
+            }
+          },
+          "fees": {
+            "$ref": "#/components/schemas/ReservationFees"
+          },
+          "guests": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "bookerDetails": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "company"
+                ],
+                "description": "Defines if this booker is a company"
+              },
+              "email": {
+                "$ref": "#/components/schemas/Email"
+              },
+              "phones": {
+                "$ref": "#/components/schemas/ClientPhones"
+              }
+            }
+          },
+          "guestsDetails": {
+            "type": "object",
+            "properties": {
+              "adults": {
+                "$ref": "#/components/schemas/guestsDetailsAdults"
+              },
+              "children": {
+                "$ref": "#/components/schemas/guestsDetailsChildren"
+              },
+              "infants": {
+                "$ref": "#/components/schemas/guestsDetailsInfants"
+              },
+              "list": {
+                "$ref": "#/components/schemas/guestsDetailsList"
+              }
+            }
+          },
+          "internalNote": {
+            "type": "string"
+          },
+          "_idpromoCode": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "partnerCode": {
+            "$ref": "#/components/schemas/partnerCode"
+          },
+          "isMaster": {
+            "type": "boolean"
+          },
+          "childs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_idlisting": {
+                  "$ref": "#/components/schemas/UniqID"
+                },
+                "checkInDate": {
+                  "$ref": "#/components/schemas/DateString"
+                },
+                "checkInTime": {
+                  "$ref": "#/components/schemas/TimeString"
+                },
+                "checkOutDate": {
+                  "$ref": "#/components/schemas/DateString"
+                },
+                "checkOutTime": {
+                  "$ref": "#/components/schemas/TimeString"
+                }
+              }
+            }
+          },
+          "reservationUrl": {
+            "type": "string",
+            "description": "URL redirection to Stays system reservation page",
+            "readOnly": true
+          },
+          "checkoutTerms": {
+            "type": "array",
+            "description": "List of terms and conditions applicable to reservation",
+            "readOnly": true,
+            "items": {
+              "type": "object",
+              "properties": {
+                "_msname": {
+                  "$ref": "#/components/schemas/MultiLang",
+                  "description": "Terms and conditions multilanguage name"
+                },
+                "isRequired": {
+                  "type": "boolean",
+                  "description": "Indicates if terms and conditions are required to make reservation"
+                },
+                "checkedByClient": {
+                  "type": "boolean",
+                  "description": "Indicates if terms and condtions was accepted by client"
+                },
+                "refUrl": {
+                  "type": "string",
+                  "description": "Terms and conditions reference url"
+                }
+              }
+            }
+          },
+          "appCustomFields": {
+            "$ref": "#/components/schemas/AppCustomFieldForTarget"
+          },
+          "cardsInfo": {
+            "type": "array",
+            "description": "List of masked card numbers used for this reservation. Applicable only for website reservations.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "number": {
+                  "type": "string",
+                  "description": "Masked card number"
+                }
+              }
+            }
+          },
+          "mealIncluded": {
+            "type": "boolean",
+            "readOnly": true,
+            "description": "Indicates if meal is included in reservation"
+          }
+        }
+      },
+      "ReservationBlockingBody": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "blocked",
+              "maintenance"
+            ]
+          },
+          "checkInDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkInTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "checkOutDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkOutTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "internalNote": {
+            "type": "string"
+          },
+          "cleaningTaskBefore": {
+            "type": "boolean",
+            "description": "Indicates if cleaning task should be created before start"
+          },
+          "cleaningTaskAfter": {
+            "type": "boolean",
+            "description": "Indicates if cleaning task should be created after end"
+          }
+        }
+      },
+      "ReservationBlockingBodyNew": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "type",
+              "listingId",
+              "checkInDate",
+              "checkOutDate"
+            ],
+            "properties": {
+              "checkInDate": {
+                "$ref": "#/components/schemas/DateString"
+              },
+              "checkOutDate": {
+                "$ref": "#/components/schemas/DateString"
+              },
+              "listingId": {
+                "$ref": "#/components/schemas/DualID"
+              },
+              "type": {
+                "$ref": "#/components/schemas/ReservationType"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ReservationBlockingBody"
+          }
+        ]
+      },
+      "ReservationBody": {
+        "type": "object",
+        "properties": {
+          "checkInDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkInTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "checkOutDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkOutTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "_idclient": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "guests": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "guestsDetails": {
+            "type": "object",
+            "properties": {
+              "adults": {
+                "$ref": "#/components/schemas/guestsDetailsAdults"
+              },
+              "children": {
+                "$ref": "#/components/schemas/guestsDetailsChildren"
+              },
+              "list": {
+                "$ref": "#/components/schemas/guestsDetailsList"
+              }
+            }
+          },
+          "operator": {
+            "$ref": "#/components/schemas/Operator"
+          },
+          "agent": {
+            "$ref": "#/components/schemas/Agent"
+          },
+          "price": {
+            "type": "object",
+            "required": [
+              "currency"
+            ],
+            "properties": {
+              "currency": {
+                "$ref": "#/components/schemas/CurrencyCode"
+              },
+              "_f_expected": {
+                "type": "number"
+              },
+              "_f_total": {
+                "type": "number"
+              }
+            }
+          },
+          "internalNote": {
+            "type": "string"
+          },
+          "_idagent": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "appCustomFields": {
+            "$ref": "#/components/schemas/AppCustomFieldForTarget"
+          }
+        }
+      },
+      "ReservationBodyCancel": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "canceled"
+            ]
+          },
+          "cancelMessage": {
+            "type": "string"
+          },
+          "isGuestCancellationRequested": {
+            "type": "boolean",
+            "description": "Cancellation requested by guest"
+          }
+        },
+        "maxProperties": 3
+      },
+      "ReservationBodyModify": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "type"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "reserved",
+                  "booked",
+                  "contract"
+                ]
+              },
+              "promocode": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqID"
+                  },
+                  {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Promo code name"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ReservationBody"
+          }
+        ]
+      },
+      "ReservationBodyNew": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "type",
+              "listingId",
+              "checkInDate",
+              "checkOutDate",
+              "_idclient",
+              "guests"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "reserved",
+                  "booked"
+                ]
+              },
+              "promocode": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/UniqID"
+                  },
+                  {
+                    "type": "string",
+                    "description": "Promo code name"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ReservationBody"
+          }
+        ]
+      },
+      "ReservationDiscounts": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Discount name"
+            },
+            "_f_val": {
+              "type": "number",
+              "description": "Discount total"
+            }
+          }
+        }
+      },
+      "ReservationExport": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ReservationExportBase"
+          }
+        ]
+      },
+      "ReservationExportBase": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "id": {
+            "$ref": "#/components/schemas/InternalID"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ReservationType"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Reservation currency"
+          },
+          "checkInDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkOutDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "observation": {
+            "type": "string",
+            "description": "Observation"
+          },
+          "guestTotalCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Guest Count Total for reservation"
+          },
+          "nightCount": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total Night Count for reservation"
+          },
+          "creationDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "creationTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "creationDateTime": {
+            "$ref": "#/components/schemas/DateTimeString",
+            "description": "Reservation creation date and time with timezone"
+          },
+          "forwardingDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "pricePerNight": {
+            "type": "number",
+            "description": "Price Per Night Value"
+          },
+          "reserveTotal": {
+            "type": "number",
+            "description": "Reservation Total value"
+          },
+          "listingInvoiceTotal": {
+            "type": "number",
+            "description": "Listing Invoice Total"
+          },
+          "extraServicesTotal": {
+            "type": "number",
+            "description": "Extra Services Total"
+          },
+          "listing": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/InternalID",
+                "description": "Listing identifier"
+              },
+              "internalName": {
+                "type": "string",
+                "description": "Listing Internal Name"
+              }
+            }
+          },
+          "baseAmountForwarding": {
+            "type": "number",
+            "description": "Base Amount for Forwarding"
+          },
+          "sellPriceCorrected": {
+            "type": "number",
+            "description": "Corrected Sell Price"
+          },
+          "companyCommision": {
+            "type": "number",
+            "description": "Company Commission"
+          },
+          "buyPrice": {
+            "type": "number",
+            "description": "Buy Price"
+          },
+          "totalForwardFee": {
+            "type": "number",
+            "description": "Total Forward Fee amount"
+          },
+          "client": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              "name": {
+                "type": "string",
+                "description": "Guest Name"
+              },
+              "phoneNumber": {
+                "type": "string",
+                "description": "Phone Number"
+              },
+              "firstName": {
+                "type": "string",
+                "description": "Guest First Name"
+              },
+              "lastName": {
+                "type": "string",
+                "description": "Guest Last Name"
+              },
+              "email": {
+                "$ref": "#/components/schemas/Email"
+              }
+            }
+          },
+          "partnerName": {
+            "type": "string",
+            "description": "External channel name for reservation"
+          },
+          "agentName": {
+            "type": "string",
+            "description": "Agent Name"
+          },
+          "hasReview": {
+            "type": "boolean",
+            "description": "Did guest make a Review?"
+          },
+          "_f_reviewAvg": {
+            "type": "number",
+            "description": "Average review rating"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Document type"
+                },
+                "number": {
+                  "type": "string",
+                  "description": "Document number"
+                }
+              }
+            }
+          },
+          "fee": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "val": {
+                  "type": "number",
+                  "description": "Fee amount"
+                },
+                "desc": {
+                  "type": "string",
+                  "description": "Fee description"
+                }
+              }
+            }
+          },
+          "ownerFee": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "val": {
+                  "type": "number",
+                  "description": "Fee amount"
+                },
+                "desc": {
+                  "type": "string",
+                  "description": "Fee description"
+                }
+              }
+            }
+          },
+          "partnerCode": {
+            "type": "string",
+            "description": "Partner code"
+          }
+        }
+      },
+      "ReservationExtraService": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Extra services identifier inside reserve"
+          },
+          "_idextra": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Extra service identifier"
+          },
+          "_msname": {
+            "$ref": "#/components/schemas/MultiLang",
+            "description": "Extra service multilanguage name"
+          },
+          "_f_unitPrice": {
+            "type": "number",
+            "description": "Extra service unit amount price"
+          },
+          "_i_unitCount": {
+            "type": "number",
+            "description": "Extra services quantity"
+          },
+          "_f_val": {
+            "type": "number",
+            "description": "Extra service total amount"
+          },
+          "startDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Extra service start date"
+          },
+          "endDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Extra service end date"
+          },
+          "startTime": {
+            "$ref": "#/components/schemas/TimeString",
+            "description": "Extra service start time"
+          },
+          "endTime": {
+            "$ref": "#/components/schemas/TimeString",
+            "description": "Extra service end time"
+          },
+          "desc": {
+            "type": "string",
+            "description": "Extra service comment"
+          }
+        }
+      },
+      "ReservationExtraServicesList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ReservationExtraService"
+        }
+      },
+      "ReservationFees": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Fee name"
+            },
+            "_f_val": {
+              "type": "number",
+              "description": "Fee total"
+            }
+          }
+        }
+      },
+      "ReservationPayment": {
+        "type": "object",
+        "required": [
+          "type",
+          "_f_val",
+          "expirationDate"
+        ],
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_idpaymentProvider": {
+            "$ref": "#/components/schemas/UniqID",
+            "description": "Payment provider identifier"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "credit",
+              "debit"
+            ],
+            "description": "Payment type"
+          },
+          "_f_val": {
+            "type": "number",
+            "description": "Payment amount"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed"
+            ],
+            "description": "Payment status"
+          },
+          "expirationDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Payment expiration date"
+          },
+          "paymentDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Payment date"
+          },
+          "competenceDate": {
+            "$ref": "#/components/schemas/DateString",
+            "description": "Payment competence date"
+          },
+          "name": {
+            "type": "string",
+            "description": "Payment name"
+          },
+          "desc": {
+            "type": "string",
+            "description": "Payment description"
+          },
+          "_f_fee": {
+            "type": "number",
+            "description": "Payment fee"
+          },
+          "_f_tax": {
+            "type": "number",
+            "description": "Payment tax"
+          },
+          "readonly": {
+            "type": "boolean",
+            "readOnly": true,
+            "description": "Indicates that Payment cannot be modified through API (Except expirationDate)"
+          }
+        }
+      },
+      "ReservationPayments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ReservationPayment"
+        }
+      },
+      "ReservationRequestBodyRequest": {
+        "type": "object",
+        "required": [
+          "listingId",
+          "_idclient",
+          "checkInDate",
+          "checkInTime",
+          "checkOutDate",
+          "checkOutTime",
+          "guestsDetails"
+        ],
+        "properties": {
+          "listingId": {
+            "$ref": "#/components/schemas/DualID"
+          },
+          "_idclient": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "checkInDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkInTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "checkOutDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkOutTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "message": {
+            "type": "string"
+          },
+          "_mctotal": {
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "communicationWays": {
+            "description": "Ways to communicate to the client",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "$ref": "#/components/schemas/UniqID"
+                }
+              }
+            }
+          },
+          "marketingSource": {
+            "description": "Announcement platform",
+            "type": "object",
+            "properties": {
+              "_id": {
+                "$ref": "#/components/schemas/UniqID"
+              }
+            }
+          },
+          "guestsDetails": {
+            "description": "Guest reservation details",
+            "type": "object",
+            "properties": {
+              "adults": {
+                "$ref": "#/components/schemas/guestsDetailsAdults"
+              },
+              "children": {
+                "$ref": "#/components/schemas/guestsDetailsChildren"
+              }
+            }
+          }
+        }
+      },
+      "ReservationRequestBodyResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_idlisting": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UniqID"
+              },
+              {
+                "$ref": "#/components/schemas/InternalID"
+              }
+            ]
+          },
+          "_idclient": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "creationDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "creationTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "checkInDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkInTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "checkOutDate": {
+            "$ref": "#/components/schemas/DateString"
+          },
+          "checkOutTime": {
+            "$ref": "#/components/schemas/TimeString"
+          },
+          "message": {
+            "type": "string"
+          },
+          "_mctotal": {
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "_mcdeposit": {
+            "$ref": "#/components/schemas/MultiCurrency"
+          },
+          "fees": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "Fee name"
+                },
+                "_mcval": {
+                  "$ref": "#/components/schemas/MultiCurrency"
+                }
+              }
+            }
+          },
+          "communicationWays": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "_msname": {
+                  "$ref": "#/components/schemas/MultiLang"
+                }
+              }
+            },
+            "description": "Ways to communicate to the client"
+          },
+          "marketingSource": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "_msname": {
+                "$ref": "#/components/schemas/MultiLang"
+              }
+            },
+            "description": "Announcement platform"
+          },
+          "guestsDetails": {
+            "description": "Guest reservation details",
+            "type": "object",
+            "properties": {
+              "adults": {
+                "$ref": "#/components/schemas/guestsDetailsAdults"
+              },
+              "children": {
+                "$ref": "#/components/schemas/guestsDetailsChildren"
+              },
+              "list": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Guest name"
+                    },
+                    "email": {
+                      "type": "string",
+                      "description": "Guest email"
+                    },
+                    "phone": {
+                      "type": "string",
+                      "description": "Guest phone"
+                    },
+                    "primary": {
+                      "type": "boolean",
+                      "description": "Indicates if it's main guest"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ReservationType": {
+        "type": "string",
+        "enum": [
+          "reserved",
+          "booked",
+          "contract",
+          "blocked",
+          "maintenance",
+          "canceled"
+        ]
+      },
+      "Searchfilter": {
+        "type": "object",
+        "properties": {
+          "guests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "_i_val"
+              ],
+              "properties": {
+                "_i_val": {
+                  "type": "number"
+                }
+              }
+            },
+            "description": "Possible values for number of guests"
+          },
+          "rooms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "_i_val"
+              ],
+              "properties": {
+                "_i_val": {
+                  "type": "number"
+                }
+              }
+            },
+            "description": "Possible values for number of Listing rooms"
+          },
+          "cities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "val"
+              ],
+              "properties": {
+                "val": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Possible values for available listing's cities"
+          },
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "val"
+              ],
+              "properties": {
+                "val": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Possible values for available listing's regions"
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "val"
+              ],
+              "properties": {
+                "val": {
+                  "type": "string",
+                  "description": "Country code"
+                },
+                "_msname:": {
+                  "$ref": "#/components/schemas/MultiLang"
+                }
+              }
+            },
+            "description": "Possible values for available listing's countries"
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "val"
+              ],
+              "properties": {
+                "val": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Possible values for available listing's states"
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PropertyBase"
+            },
+            "description": "Possible values of properties"
+          },
+          "amenities": {
+            "$ref": "#/components/schemas/TranslationsList",
+            "description": "Possible values for available listing's amenities"
+          },
+          "inventory": {
+            "$ref": "#/components/schemas/TranslationsList",
+            "description": "Possible values for available listing's inventory items"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "$ref": "#/components/schemas/UniqID"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Internal group name"
+                },
+                "_mstitle": {
+                  "$ref": "#/components/schemas/MultiLang"
+                }
+              }
+            },
+            "description": "Possible values of custom groups, that can union listings by some criteria"
+          }
+        }
+      },
+      "TimeString": {
+        "type": "string",
+        "pattern": "^\\d{2}:\\d{2}$",
+        "example": "14:00"
+      },
+      "Translation": {
+        "type": "object",
+        "required": [
+          "_id",
+          "_mstitle"
+        ],
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/UniqID"
+          },
+          "_mstitle": {
+            "$ref": "#/components/schemas/MultiLang"
+          }
+        }
+      },
+      "TranslationsList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Translation"
+        }
+      },
+      "UniqID": {
+        "type": "string",
+        "pattern": "^([a-f0-9]){24}$",
+        "description": "Hexadecimal unique identifier",
+        "example": "5dee464910450609ca7ea2d7"
+      },
+      "UserResponsibility": {
+        "type": "object",
+        "properties": {
+          "responsibility": {
+            "type": "object",
+            "description": "User responsibility functions",
+            "properties": {
+              "reservationAgent": {
+                "type": "boolean",
+                "description": "Reservation's agent function"
+              }
+            }
+          }
+        }
+      },
+      "commission": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/commissionFixed"
+          },
+          {
+            "$ref": "#/components/schemas/commissionPercent"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "fixed": "#/components/schemas/commissionFixed",
+            "percent": "#/components/schemas/commissionPercent"
+          }
+        }
+      },
+      "commissionFixed": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "fixed"
+            ]
+          },
+          "_mcval": {
+            "$ref": "#/components/schemas/MultiCurrency"
+          }
+        }
+      },
+      "commissionPercent": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "percent"
+            ]
+          },
+          "percent": {
+            "type": "number",
+            "description": "Commission percent"
+          }
+        }
+      },
+      "guestsDetailsAdults": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Number of adults"
+      },
+      "guestsDetailsChildren": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Number of children"
+      },
+      "guestsDetailsInfants": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Number of infants"
+      },
+      "guestsDetailsList": {
+        "type": "array",
+        "description": "if you want to change it (PATCH), do not put the primary in the list",
+        "items": {
+          "type": "object",
+          "properties": {
+            "_id": {
+              "$ref": "#/components/schemas/UniqID"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "adult",
+                "child",
+                "infant"
+              ],
+              "description": "Age guest type"
+            },
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "age": {
+              "type": "number"
+            },
+            "birthday": {
+              "$ref": "#/components/schemas/DateString"
+            },
+            "phones": {
+              "$ref": "#/components/schemas/ClientPhones"
+            },
+            "documents": {
+              "$ref": "#/components/schemas/ClientDocuments"
+            },
+            "primary": {
+              "type": "boolean",
+              "description": "Indicates if it's main guest"
+            }
+          }
+        }
+      },
+      "partnerCode": {
+        "type": "string",
+        "description": "Partner Code",
+        "example": "A025-D2362"
+      }
+    }
+  }
+}
