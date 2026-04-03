@@ -22,12 +22,12 @@
         "ext-json": "*",
         "ext-curl": "*",
         "guzzlehttp/guzzle": "^7.0",
-        "illuminate/http": "^9.0|^10.0|^11|^12",
-        "illuminate/validation": "^9.0|^10.0|^11|^12"
+        "illuminate/http": "^9.0|^10.0|^11|^12|^13",
+        "illuminate/validation": "^9.0|^10.0|^11|^12|^13"
     },
     "require-dev": {
         "pestphp/pest": "^4.0",
-        "orchestra/testbench": "^10.0"
+        "orchestra/testbench": "^10.0|^11.0"
     },
     "config": {
         "allow-plugins": {
