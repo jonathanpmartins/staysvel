@@ -9,6 +9,7 @@ use Staysvel\Lib\Content;
 use Staysvel\Lib\Doc;
 use Staysvel\Lib\Finance;
 use Staysvel\Lib\Price;
+use Staysvel\Lib\Review;
 use Staysvel\Lib\Setting;
 use Staysvel\Lib\Translation;
 
@@ -61,6 +62,11 @@ class Stays
     public static function setting(): Setting
     {
         return (new Setting())->timeout(self::$timeout);
+    }
+
+    public static function review(): Review
+    {
+        return (new Review())->timeout(self::$timeout);
     }
 
     public static function translation(): Translation
