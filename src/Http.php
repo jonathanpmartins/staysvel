@@ -9,11 +9,19 @@ use Illuminate\Support\Facades\Http AS HttpClient;
 class Http
 {
     private bool $isXlsx = false;
-    private int $timeout = 60;
+    private int $timeout = 30;
+    private int $connectTimeout = 10;
 
     public function timeout(int $timeout): static
     {
         $this->timeout = $timeout;
+
+        return $this;
+    }
+
+    public function connectTimeout(int $connectTimeout): static
+    {
+        $this->connectTimeout = $connectTimeout;
 
         return $this;
     }
@@ -34,13 +42,13 @@ class Http
         {
             $client = HttpClient::staysXlsx()
                 ->timeout($this->timeout)
-                ->connectTimeout($this->timeout);
+                ->connectTimeout($this->connectTimeout);
         }
         else
         {
             $client = HttpClient::stays()
                 ->timeout($this->timeout)
-                ->connectTimeout($this->timeout);
+                ->connectTimeout($this->connectTimeout);
         }
 
         return $client->get($uri, $parameters);
@@ -53,7 +61,7 @@ class Http
     {
         return HttpClient::stays()
             ->timeout($this->timeout)
-            ->connectTimeout($this->timeout)
+            ->connectTimeout($this->connectTimeout)
             ->post($uri, $parameters);
     }
 
@@ -64,7 +72,7 @@ class Http
     {
         return HttpClient::stays()
             ->timeout($this->timeout)
-            ->connectTimeout($this->timeout)
+            ->connectTimeout($this->connectTimeout)
             ->patch($uri, $parameters);
     }
 
@@ -75,7 +83,7 @@ class Http
     {
         return HttpClient::stays()
             ->timeout($this->timeout)
-            ->connectTimeout($this->timeout)
+            ->connectTimeout($this->connectTimeout)
             ->delete($uri);
     }
 }

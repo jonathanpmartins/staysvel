@@ -10,11 +10,11 @@ class Finance extends Api
 {
     public function paymentProviders(): PaymentProvider
     {
-        return (new PaymentProvider())->timeout($this->timeout);
+        return (new PaymentProvider())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function owners(): Owner
     {
-        return (new Owner())->timeout($this->timeout);
+        return (new Owner())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 }

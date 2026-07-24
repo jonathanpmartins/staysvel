@@ -9,6 +9,6 @@ class Review extends Api
 {
     public function guest(): Guest
     {
-        return (new Guest())->timeout($this->timeout);
+        return (new Guest())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 }

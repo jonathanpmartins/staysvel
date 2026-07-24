@@ -20,6 +20,6 @@ class Listing extends Api
 
     public function houseRules(): HouseRule
     {
-        return (new HouseRule())->timeout($this->timeout);
+        return (new HouseRule())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 }

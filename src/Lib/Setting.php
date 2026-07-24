@@ -9,6 +9,6 @@ class Setting extends Api
 {
     public function listing(): Listing
     {
-        return (new Listing())->timeout($this->timeout);
+        return (new Listing())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 }

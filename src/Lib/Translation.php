@@ -10,11 +10,11 @@ class Translation extends Api
 {
     public function types(): Type
     {
-        return (new Type())->timeout($this->timeout);
+        return (new Type())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function amenities(): Amenity
     {
-        return (new Amenity())->timeout($this->timeout);
+        return (new Amenity())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 }

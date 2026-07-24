@@ -42,16 +42,16 @@ class Reservation extends Api
 
     public function extras(): ReservationExtraService
     {
-        return (new ReservationExtraService())->timeout($this->timeout);
+        return (new ReservationExtraService())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function payments(): ReservationPayment
     {
-        return (new ReservationPayment())->timeout($this->timeout);
+        return (new ReservationPayment())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function export(): ReservationExport
     {
-        return (new ReservationExport())->timeout($this->timeout);
+        return (new ReservationExport())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 }

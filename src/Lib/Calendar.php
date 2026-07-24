@@ -9,6 +9,6 @@ class Calendar extends Api
 {
     public function listings(): Listing
     {
-        return (new Listing())->timeout($this->timeout);
+        return (new Listing())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 }

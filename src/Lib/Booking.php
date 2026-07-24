@@ -15,36 +15,36 @@ class Booking extends Api
 {
     public function promoCodes(): PromoCode
     {
-        return (new PromoCode())->timeout($this->timeout);
+        return (new PromoCode())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function search(): Search
     {
-        return (new Search())->timeout($this->timeout);
+        return (new Search())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function listingPrice(): ListingPrice
     {
-        return (new ListingPrice())->timeout($this->timeout);
+        return (new ListingPrice())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function blocking(): Blocking
     {
-        return (new Blocking())->timeout($this->timeout);
+        return (new Blocking())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function reservations(): Reservation
     {
-        return (new Reservation())->timeout($this->timeout);
+        return (new Reservation())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function clients(): Client
     {
-        return (new Client())->timeout($this->timeout);
+        return (new Client())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 
     public function extraServices(): ExtraService
     {
-        return (new ExtraService())->timeout($this->timeout);
+        return (new ExtraService())->timeout($this->timeout)->connectTimeout($this->connectTimeout);
     }
 }
